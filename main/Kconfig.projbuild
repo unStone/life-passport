@@ -1,0 +1,8 @@
+menu "Life Passport"
+config LIFE_ACOUSTIC_LAB_BOOT
+    bool "Open the acoustic receiver on cold boot"
+    default y
+    help
+        Diagnostic delivery starts on the microphone reception screen.
+        Hold OK to return to the Game of Life tools.
+endmenu

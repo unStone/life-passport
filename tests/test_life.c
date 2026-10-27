@@ -187,6 +187,28 @@ static void test_opening_pattern(void) {
 }
 
 int main(void) {
+    life_app_t listening;
+    life_app_init(&listening, 1, 0);
+    life_app_input(&listening, LIFE_OK_LONG, 1);
+    listening.selection = 4;
+    life_app_input(&listening, LIFE_OK, 2);
+    assert(listening.page == LIFE_LINK && listening.audio_requested);
+    assert(life_app_idle(&listening, 600002) == LIFE_BRIGHT);
+    life_app_input(&listening, LIFE_OK, 600003);
+    assert(!listening.audio_requested && life_app_idle(&listening, 690003) == LIFE_BLANK);
+    assert(life_app_input(&listening, LIFE_OK, 690004));
+    assert(!listening.audio_requested);
+    life_app_input(&listening, LIFE_OK, 690005);
+    assert(listening.audio_requested);
+    life_remote_seed_t acoustic = { .id = 81, .interval_ms = 200, .wrap = true };
+    assert(life_app_receive(&listening, &acoustic, 690006) == LIFE_REMOTE_NEW);
+    assert(life_app_idle(&listening, 1290006) == LIFE_BRIGHT);
+    life_app_input(&listening, LIFE_OK_LONG, 1290007);
+    assert(listening.page == LIFE_LINK && listening.audio_requested);
+    assert(life_app_receive(&listening, &acoustic, 1290008) == LIFE_REMOTE_REPEAT);
+    assert(listening.page == LIFE_LINK);
+    life_app_input(&listening, LIFE_OK_LONG, 1290009);
+    assert(listening.page == LIFE_TOOLS && !listening.audio_requested);
     test_running_power_and_pause_grace();
     test_opening_pattern();
     test_remote_visibility();

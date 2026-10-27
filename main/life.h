@@ -42,7 +42,7 @@ typedef struct {
     life_page_t saved_page;
     life_remote_status_t remote_status;
     uint8_t saved_speed;
-    bool saved_running, custom_seed, phone_connected;
+    bool saved_running, custom_seed, phone_connected, audio_requested;
     uint32_t remote_id, remote_crc;
     uint16_t remote_interval;
     bool remote_wrap;

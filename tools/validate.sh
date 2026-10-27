@@ -32,8 +32,13 @@ run_static_checks() {
     "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
         tests/test_life.c main/life.c -o "${test_dir}/test_life"
     "${test_dir}/test_life"
+    "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
+        tests/test_life_audio_protocol.c main/life_audio_protocol.c main/life.c \
+        -lz -o "${test_dir}/test_life_audio"
+    "${test_dir}/test_life_audio"
     python3 tools/generate_life_font.py --check
     python3 tools/generate_mobile_font.py --check
+    python3 tools/generate_web_font.py --check
     "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
         tests/test_ui_pixel_math.c main/ui_pixel_math.c \
         -o "${test_dir}/test_ui_pixel_math"
@@ -118,6 +123,7 @@ case "${mode}" in
         run_firmware_checks
         python3 tools/test_life_wire.py
         python3 tools/test_life_ui.py
+        python3 tools/test_life_audio.py
         ;;
     --static)
         run_static_checks

@@ -17,11 +17,12 @@ LV_DRAW_BUF_DEFINE_STATIC(s_pixels, BOARD_W, BOARD_H, LV_COLOR_FORMAT_I4);
 static lv_obj_t *s_screen, *s_title, *s_meta, *s_battery;
 static lv_obj_t *s_frame, *s_canvas, *s_status, *s_hint, *s_help;
 static lv_obj_t *s_rows[6];
+static life_audio_view_t s_audio = { .dbfs = -96 };
 static const char *const s_seeds[] = {
     "滑翔机", "脉冲星", "闪烁器", "轻型飞船", "随机宇宙", "空白画布", "R五连块"
 };
 static const char *const s_tools[] = {
-    "种子图鉴", "重新播种", "编辑细胞", "边界", "种子接收", "演化法则", "返回演化"
+    "种子图鉴", "重新播种", "编辑细胞", "边界", "声音接收", "演化法则", "返回演化"
 };
 static const char *const s_seed_hints[] = {
     "四代前进一格", "三代循环的星群", "两代交替的节奏",
@@ -137,7 +138,7 @@ void life_ui_refresh(const life_app_t *app, int battery) {
     if (app->page == LIFE_LIBRARY) title = "种子图鉴";
     if (app->page == LIFE_EDIT) title = "编辑细胞";
     if (app->page == LIFE_HELP) title = "演化法则";
-    if (app->page == LIFE_LINK) title = "种子接收";
+    if (app->page == LIFE_LINK) title = "声音接收";
     if (app->page == LIFE_REMOTE) title = "收到种子";
     lv_label_set_text(s_title, title);
     if (battery >= 0 && battery <= 100) lv_label_set_text_fmt(s_battery, "%d%%", battery);
@@ -151,10 +152,25 @@ void life_ui_refresh(const life_app_t *app, int battery) {
     lv_obj_set_style_border_color(s_frame, lv_color_hex(app->game.wrap ? MUTED : ACCENT), 0);
     lv_obj_set_flag(s_canvas, LV_OBJ_FLAG_HIDDEN, list || text_page);
     lv_obj_set_flag(s_help, LV_OBJ_FLAG_HIDDEN, !text_page);
-    if (app->page == LIFE_LINK)
-        lv_label_set_text_fmt(s_help, "蓝牙接收已开启\nLifePassport\n\n%s\n\n收到后OK应用\n再次OK开始演化\n长按OK取消接收",
-                             app->phone_connected ? "发送器已连接" : "等待发送器连接");
-    else lv_label_set_text(s_help, s_rules);
+    if (app->page == LIFE_LINK) {
+        lv_label_set_text(s_meta, "24kHz 16B 六音/双音");
+        const char *state = s_audio.state == LIFE_CAPTURE_LISTENING ? "监听中" :
+                            s_audio.state == LIFE_CAPTURE_STARTING ? "正在开启麦克风" :
+                            s_audio.state == LIFE_CAPTURE_FAILED ? "接收失败，OK重试" : "已暂停监听";
+        int db10 = (int)(s_audio.dbfs * 10);
+        unsigned magnitude = (unsigned)(db10 < 0 ? -db10 : db10);
+        lv_label_set_text_fmt(s_help, "%s\n信号 %s%u.%udBFS\n主频%luHz 削波%lu%%\n通过%lu 拒绝%lu\n重复%lu 序号%u\n数据%s\n解码最大%lu.%lums\n%s",
+            state, db10 < 0 ? "-" : "", magnitude / 10, magnitude % 10,
+            (unsigned long)s_audio.frequency_hz, (unsigned long)s_audio.clipped_percent,
+            (unsigned long)s_audio.valid, (unsigned long)s_audio.rejected, (unsigned long)s_audio.duplicates,
+            s_audio.seq, s_audio.payload[0] ? s_audio.payload : "--", (unsigned long)(s_audio.max_decode_us / 1000),
+            (unsigned long)((s_audio.max_decode_us % 1000) / 100),
+            s_audio.key[0] ? s_audio.key : "请播放网页测试音");
+        if (s_audio.state == LIFE_CAPTURE_FAILED)
+            lv_label_set_text_fmt(s_status, "失败阶段%u 代码%lu", s_audio.stage, (unsigned long)s_audio.error);
+        else lv_label_set_text(s_status, "校验通过请对照序号");
+        lv_label_set_text(s_hint, "下清零 OK暂停 长按返回");
+    } else lv_label_set_text(s_help, s_rules);
     unsigned offset = list && app->selection >= 6 ? app->selection - 5 : 0;
     for (unsigned i = 0; i < 6; ++i) {
         lv_obj_set_flag(s_rows[i], LV_OBJ_FLAG_HIDDEN, !list);
@@ -175,7 +191,10 @@ void life_ui_refresh(const life_app_t *app, int battery) {
         lv_label_set_text(s_hint, app->running ? "上调速 下单步 OK暂停" : "上调速 下单步 OK播放");
         draw_board(app);
     } else if (app->page == LIFE_REMOTE) {
-        lv_label_set_text(s_status, "完整接收，请确认图案");
+        if (app->audio_requested && s_audio.key[0]) {
+            lv_label_set_text_fmt(s_status, "key %s", s_audio.key);
+            lv_label_set_text_fmt(s_meta, "活%04u CRC%08lX", app->game.population, (unsigned long)app->remote_crc);
+        } else lv_label_set_text(s_status, "完整接收，请确认图案");
         lv_label_set_text(s_hint, "OK应用 长按取消");
         draw_board(app);
     } else if (app->page == LIFE_EDIT) {
@@ -185,8 +204,10 @@ void life_ui_refresh(const life_app_t *app, int battery) {
     } else if (app->page == LIFE_LIBRARY) {
         lv_label_set_text(s_status, s_seed_hints[app->selection]);
         lv_label_set_text(s_hint, "上下选择 OK:确定 长按返回");
-    } else {
+    } else if (app->page != LIFE_LINK) {
         lv_label_set_text(s_status, "长按OK:返回");
         lv_label_set_text(s_hint, text_page ? "OK:返回工具" : "上下选择 OK:确定");
     }
 }
+
+void life_ui_audio_update(const life_audio_view_t *view) { s_audio = *view; }

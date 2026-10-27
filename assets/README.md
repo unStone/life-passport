@@ -38,6 +38,11 @@ the fixed UI subset covers arbitrary input.
 
 Store reusable font files and generated font sources in `fonts/`.
 
+The acoustic site uses `fonts/life_web.ttf`, mirrored to `site/public/fonts/` with
+its OFL and copyright notices. `tools/generate_web_font.py --source <NotoSansSC-VF.ttf>`
+subsets the same weight-500 source against the complete HTML and JavaScript UI.
+`--check` validates coverage and both hashes against `fonts/life_web_inventory.json`.
+
 - Use descriptive names that include the family, weight, size, and format when relevant.
 - Document the source, license, character range, conversion command, and expected destination.
 - Check Flash and internal-RAM impact before adding a font; the ESP32-C3 has no PSRAM.

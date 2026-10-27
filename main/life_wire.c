@@ -1,21 +1,13 @@
 #include "life_wire.h"
+#include "life_crc.h"
 #include "cJSON.h"
 #include <assert.h>
 #include <math.h>
 #include <string.h>
-#ifdef ESP_PLATFORM
-#include "esp_rom_crc.h"
-#else
-#include <zlib.h>
-#endif
 
 uint32_t life_wire_crc(const uint8_t bits[LIFE_BITS_SIZE]) {
     assert(bits);
-#ifdef ESP_PLATFORM
-    return esp_rom_crc32_le(0, bits, LIFE_BITS_SIZE);
-#else
-    return (uint32_t)crc32(0, bits, LIFE_BITS_SIZE);
-#endif
+    return life_crc32(bits, LIFE_BITS_SIZE);
 }
 
 static bool integer(const cJSON *value, double minimum, double maximum, double *out) {

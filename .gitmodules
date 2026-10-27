@@ -1,0 +1,3 @@
+[submodule "components/ggwave/upstream"]
+	path = components/ggwave/upstream
+	url = https://github.com/ggerganov/ggwave.git

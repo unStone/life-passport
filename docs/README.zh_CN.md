@@ -201,6 +201,7 @@ LICENSE                  仓库许可证
 | --- | --- |
 | [开发指南](development/README.zh_CN.md) | AI 工作流、工程规范、CI 与发布流程 |
 | [生命游戏](game-of-life.zh_CN.md) | 当前分支的离线细胞自动机、操作、字体生成与验收标准 |
+| [声音种子实验室](acoustic-lab.zh_CN.md) | 浏览器发送、LP1协议、诊断接收器与14项手动用例 |
 | [种子压缩与声音抗噪](seed-transport-research.zh_CN.md) | 固定棋盘编码实测、纠错、丢帧恢复及音频资源实验 |
 | [手机种子编辑器](mobile-control.zh_CN.md) | Android/iOS 编辑器、语音指令、BLE 协议与实体确认 |
 | [AI 技能](../skills/README.zh_CN.md) | 开发、环境准备、构建、真机测试与故障诊断 |

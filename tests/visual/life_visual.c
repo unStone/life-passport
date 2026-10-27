@@ -154,6 +154,17 @@ int main(int argc, char **argv) {
     for (int i = 0; i < 4; ++i) action(&app, LIFE_DOWN, &time);
     action(&app, LIFE_OK, &time);
     capture(&app, "phone");
+    life_audio_view_t diagnostic = { .state = LIFE_CAPTURE_LISTENING, .dbfs = -32.5f,
+        .frequency_hz = 984, .valid = 10, .rejected = 2, .duplicates = 1, .max_decode_us = 14500, .seq = 42,
+        .payload = "FFFFFFFFFFFFFF" };
+    life_ui_audio_update(&diagnostic);
+    capture(&app, "audio");
+    bool metric_found = false;
+    for (unsigned i = 0; i < lv_obj_get_child_count(lv_screen_active()); ++i) {
+        lv_obj_t *child = lv_obj_get_child(lv_screen_active(), i);
+        if (lv_obj_check_type(child, &lv_label_class) && strstr(lv_label_get_text(child), "信号 -32.5dBFS")) metric_found = true;
+    }
+    assert(metric_found);
     action(&app, LIFE_OK_LONG, &time);
     for (int i = 0; i < 5; ++i) action(&app, LIFE_DOWN, &time);
     action(&app, LIFE_OK, &time);

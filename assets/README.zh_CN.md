@@ -32,6 +32,10 @@ Flutter 资产目录；源字体同为字重500的开放许可 Noto Sans SC，�
 
 可复用的字库文件与生成的字库源码放在 `fonts/`。
 
+声音网页使用 `fonts/life_web.ttf`，连同OFL和版权声明同步至 `site/public/fonts/`。
+`tools/generate_web_font.py --source <NotoSansSC-VF.ttf>` 根据全部HTML与JavaScript界面文字，
+从相同字重500源字体生成子集；`--check` 根据 `fonts/life_web_inventory.json` 检查覆盖与两份哈希。
+
 - 命名要能反映字族、字重、字级与格式。
 - 记录来源、许可、字符范围、转换命令与目标放置路径。
 - 添加字库前评估 Flash 与内部 RAM 影响；ESP32-C3 无 PSRAM。

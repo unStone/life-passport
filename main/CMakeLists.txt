@@ -4,9 +4,11 @@ idf_component_register(
          "life_ui.c"
          "life_wire.c"
          "life_ble.c"
+         "life_audio.cpp"
+         "life_audio_protocol.c"
          "../assets/fonts/life_font_16.c"
     INCLUDE_DIRS "."
-    REQUIRES bsp esp_hw_support esp_timer esp_system esp_driver_gpio bt nvs_flash json esp_rom
+    REQUIRES bsp esp_hw_support esp_timer esp_system esp_driver_gpio bt nvs_flash json esp_rom ggwave
 )
 
 # This application's JSON contract has object/array depth two. Bound the official

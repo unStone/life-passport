@@ -122,6 +122,7 @@ void life_app_init(life_app_t *app, uint32_t seed, uint64_t now_ms) {
 
 life_idle_t life_app_idle(const life_app_t *app, uint64_t now_ms) {
     assert(app && now_ms >= app->last_input_ms);
+    if ((app->page == LIFE_LINK || app->page == LIFE_REMOTE) && app->audio_requested) return LIFE_BRIGHT;
     if (app->page == LIFE_REMOTE && app->phone_connected) return LIFE_BRIGHT;
     uint64_t idle = now_ms - app->last_input_ms;
     if (app->running) return LIFE_BRIGHT;
@@ -149,6 +150,7 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
             app->remote_status = LIFE_REMOTE_APPLIED;
             app->seed_template = app->game;
             app->custom_seed = true;
+            app->audio_requested = false;
             app->page = LIFE_WATCH;
         } else if (input == LIFE_OK_LONG) {
             app->game = app->saved_game;
@@ -178,6 +180,7 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         return false;
     }
     if (input == LIFE_OK_LONG) {
+        app->audio_requested = false;
         app->running = false;
         if (app->page == LIFE_WATCH) { app->page = LIFE_TOOLS; app->selection = 0; }
         else if (app->page == LIFE_TOOLS) app->page = LIFE_WATCH;
@@ -191,7 +194,11 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         if (input == LIFE_OK && app->game.population) app->running = !app->running;
         return false;
     }
-    if (app->page == LIFE_HELP || app->page == LIFE_LINK) {
+    if (app->page == LIFE_LINK) {
+        if (input == LIFE_OK) app->audio_requested = !app->audio_requested;
+        return false;
+    }
+    if (app->page == LIFE_HELP) {
         if (input == LIFE_OK) app->page = LIFE_TOOLS;
         return false;
     }
@@ -216,7 +223,7 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         break;
     case 2: app->page = LIFE_EDIT; break;
     case 3: app->game.wrap = !app->game.wrap; app->game.stable = false; break;
-    case 4: app->page = LIFE_LINK; break;
+    case 4: app->page = LIFE_LINK; app->audio_requested = true; break;
     case 5: app->page = LIFE_HELP; break;
     case 6: app->page = LIFE_WATCH; break;
     }

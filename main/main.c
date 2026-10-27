@@ -9,6 +9,7 @@
 #include "life_keys.h"
 #include "life_ui.h"
 #include "life_ble.h"
+#include "life_audio.h"
 #include "esp_attr.h"
 #include "esp_heap_caps.h"
 #include "esp_log.h"
@@ -49,6 +50,7 @@ static void enter_sleep(void) {
     int mv = bsp_button_read_mv();
     ESP_ERROR_CHECK(mv < 0 ? ESP_ERR_INVALID_STATE : ESP_OK);
     if (mv < BSP_BTN_MV_RELEASED_MIN) return;
+    ESP_ERROR_CHECK(life_audio_stop());
     ESP_ERROR_CHECK(life_ble_stop());
     /* RTC retention survives sleep, while hardware power-off starts fresh. */
     s_retained = s_app;
@@ -79,6 +81,7 @@ static void app_task(void *arg) {
     life_idle_t previous_idle = LIFE_BRIGHT;
     life_remote_status_t published_status = LIFE_REMOTE_NONE;
     uint32_t published_id = 0;
+    uint64_t next_audio_ui = 0;
     for (;;) {
         bool dirty = false;
         if (xQueueReceive(s_input_queue, &input, pdMS_TO_TICKS(20)) == pdTRUE) {
@@ -87,6 +90,7 @@ static void app_task(void *arg) {
             int action = life_keys_feed(&keys, input.btn, event);
             if (action >= 0) {
                 bool wake_only = life_app_input(&s_app, action, now_ms());
+                if (!wake_only && s_app.page == LIFE_LINK && action == LIFE_DOWN) life_audio_clear();
                 ESP_LOGI(TAG, "key action=%d page=%d wake_only=%d", action, s_app.page, wake_only);
                 dirty = true;
             }
@@ -94,10 +98,14 @@ static void app_task(void *arg) {
         ESP_ERROR_CHECK(atomic_exchange(&s_queue_failed, false) ? ESP_ERR_NO_MEM : ESP_OK);
         uint64_t now = now_ms();
         life_remote_seed_t seed;
-        if (life_ble_take(&seed)) {
+        bool from_audio = false;
+        bool received = life_ble_take(&seed);
+        if (!received) { received = life_audio_take(&seed); from_audio = received; }
+        if (received) {
             life_remote_result_t result = life_app_receive(&s_app, &seed, now);
-            if (result == LIFE_REMOTE_BUSY || result == LIFE_REMOTE_CONFLICT)
-                life_ble_reply(seed.id, NULL, result == LIFE_REMOTE_BUSY ? "busy" : "id_conflict", 0, 0);
+            if (result == LIFE_REMOTE_BUSY || result == LIFE_REMOTE_CONFLICT) {
+                if (!from_audio) life_ble_reply(seed.id, NULL, result == LIFE_REMOTE_BUSY ? "busy" : "id_conflict", 0, 0);
+            }
             else {
                 if (result == LIFE_REMOTE_NEW) keys = (life_keys_t){0};
                 published_id = 0;
@@ -115,6 +123,26 @@ static void app_task(void *arg) {
         }
         bool connected = life_ble_connected();
         if (connected != s_app.phone_connected) { s_app.phone_connected = connected; dirty = true; }
+        bool want_audio = s_app.page == LIFE_LINK && s_app.audio_requested;
+        if (want_audio && !life_audio_started()) {
+            esp_err_t started = life_audio_start();
+            if (started != ESP_OK) s_app.audio_requested = false;
+            dirty = true;
+        } else if (!want_audio && life_audio_started()) {
+            ESP_ERROR_CHECK(life_audio_stop());
+            dirty = true;
+        }
+        life_audio_view_t audio;
+        life_audio_snapshot(&audio);
+        if (audio.state == LIFE_CAPTURE_FAILED && s_app.audio_requested) {
+            s_app.audio_requested = false;
+            ESP_ERROR_CHECK(life_audio_stop());
+            dirty = true;
+        }
+        if (s_app.page == LIFE_LINK && now >= next_audio_ui) {
+            next_audio_ui = now + 250;
+            dirty = true;
+        }
         life_ble_tick(now);
         dirty |= life_app_tick(&s_app, now);
         if (now >= next_battery) {
@@ -138,6 +166,7 @@ static void app_task(void *arg) {
         if (dirty) {
             int64_t before_ui = esp_timer_get_time();
             ESP_ERROR_CHECK(bsp_lvgl_lock(1000) ? ESP_OK : ESP_ERR_TIMEOUT);
+            life_ui_audio_update(&audio);
             life_ui_refresh(&s_app, battery);
             bsp_lvgl_unlock();
             uint64_t elapsed = (uint64_t)(esp_timer_get_time() - before_ui);
@@ -167,6 +196,10 @@ void app_main(void) {
     ESP_ERROR_CHECK(s_input_queue ? ESP_OK : ESP_ERR_NO_MEM);
     ESP_ERROR_CHECK(bsp_button_init(on_key, NULL));
     ESP_ERROR_CHECK(life_ble_init());
+    ESP_ERROR_CHECK(life_audio_init());
+#ifdef CONFIG_LIFE_ACOUSTIC_LAB_BOOT
+    if (!key_wake) { s_app.page = LIFE_LINK; s_app.running = false; s_app.audio_requested = true; }
+#endif
     s_app.phone_connected = false;
     if (s_key_guard.armed)
         key_guard_sync_released(&s_key_guard, bsp_button_read_mv() >= BSP_BTN_MV_RELEASED_MIN);

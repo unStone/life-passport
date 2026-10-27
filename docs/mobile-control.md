@@ -2,7 +2,7 @@
 
 # Mobile seed editor
 
-The phone-to-board interaction is deferred while its delivery method is reconsidered; installing an Android application is not a requirement of this delivery. Flutter prototype sources are retained for future evaluation. The board's validated BLE receiver remains available and requires physical confirmation for complete seeds. Firmware changes remain authorized for flashing to the already identified AI Passport.
+The selected phone test route is the [browser acoustic laboratory](acoustic-lab.md), which sends a reproducible key without an Android application. Flutter prototype sources are retained for future evaluation; the feature table below describes that prototype. The board's validated BLE receiver remains available and requires physical confirmation for complete seeds.
 
 ## Behavior
 

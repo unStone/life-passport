@@ -5,7 +5,10 @@
 Conway's Game of Life on the FoloToy AI Passport: a redesigned Chinese interface,
 a 36×32 board, three-button controls, and a 200ms default generation interval.
 The complete [upstream AI Passport project](https://gitee.com/FoloToy/ai-passport)
-and its BSP are retained. Application development lives on `feature/game-of-life`.
+and its BSP are retained. Acoustic development lives on `feature/acoustic-lab`.
+
+Open the [acoustic website](https://unstone.github.io/life-passport/) on a phone;
+follow the [fourteen manual cases](docs/acoustic-lab.md). No phone application is needed.
 
 ![Application pages rendered by the real native LVGL program](assets/images/life-ui-pages.png)
 
@@ -16,12 +19,12 @@ The image is a native LVGL render of the actual application, not a device photog
 | Area | Behavior |
 | --- | --- |
 | Simulation | B3/S23, synchronous updates, visible board border, wraparound or finite edges. |
-| Opening | Five-cell R-pentomino, automatically running at five generations per second. |
+| Opening | This diagnostic build starts listening; hold OK to return to tools/game. Disable `LIFE_ACOUSTIC_LAB_BOOT` for the running R-pentomino opening. |
 | Patterns | R-pentomino, glider, pulsar, blinker, lightweight spaceship, random 28% density, empty board. |
 | Editing | Toggle cells using the three physical keys; pause, step and reseed. |
 | Power | Running stays at normal brightness. After manual or automatic pause: dim at 30s, blank at 90s, deep sleep at 5min. |
 | Persistence | Deep sleep retains the paused board in RTC memory. Hardware power-off restarts the opening pattern. |
-| External seeds | Validated BLE receiving with local physical confirmation. Phone delivery is under research; no Android installation is required. |
+| External seeds | LP1 acoustic key reception and diagnostic packets, plus retained BLE. Validated seeds require local physical confirmation. |
 
 ## Controls
 
@@ -48,12 +51,11 @@ data, and requires authorization for the target device. Do not flash an app-only
 
 | Check | Latest application result |
 | --- | --- |
-| Build | PASS: full ESP-IDF gate and merged-image verification. |
-| Host tests | PASS: rules, timing, power state, protocol, CRC and native LVGL/font/layout checks. |
-| Device tests | PASS for authorized flashing, boot and 75s observation: generation 150 at 30s, 300 at 60s, normal-bright state, stable heap, no watchdog reset. |
-| Unverified | Full physical-key matrix, visual color/font review, sleep/wake retention, battery operation and measured current. Acoustic seed transfer is not implemented. |
+| Build | Run the full gate for the exact delivered firmware; its report includes merged-image verification. |
+| Host tests | Protocol/CRC, shared keys, native LVGL/fonts and actual WASM/native acoustic interoperability are covered by the gate. |
+| Device tests | The delivered firmware report records exact boot, resources and acoustic observations separately from software tests. |
+| Unverified | iPhone/Android playback and measured room reliability, full physical-key matrix, visual display review, battery/current and sleep/wake. |
 
-The tested merged image is `8fc2e34c775f65c40a67b969eda3a416958a2ac3035e3c376ff2d5c4eef28b80`.
 Firmware, private logs and local environment caches are excluded from Git.
 
 See [application details](docs/game-of-life.md), [external seed status and BLE protocol](docs/mobile-control.md),
