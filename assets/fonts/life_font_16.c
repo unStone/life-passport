@@ -3844,4 +3844,3 @@ lv_font_t life_font_16 = {
 
 
 #endif /*#if LIFE_FONT_16*/
-

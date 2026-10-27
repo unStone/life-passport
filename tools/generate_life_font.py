@@ -57,6 +57,7 @@ def main():
                "--no-compress", "--no-prefilter", "--lv-font-name", "life_font_16",
                "--lv-include", "lvgl.h", "--output", str(generated)]
     subprocess.run(command, check=True)
+    generated.write_text(generated.read_text().rstrip() + "\n")
     (FONT_DIR / "NOTICE.txt").write_text(
         copyright_notice + "\n\nDerived Noto Sans SC glyph subset at weight 500.\n"
         "Licensed under the SIL Open Font License 1.1; see OFL.txt.\n")
