@@ -11,5 +11,8 @@ const sources = [
 ];
 const sections = [];
 sections.push('FFT routines: Copyright Takuya OOURA, 1996–2001. https://www.kurims.kyoto-u.ac.jp/~ooura/fft.html');
-for (const [name, path] of sources) sections.push(`${name}\n\n${await readFile(path, 'utf8')}`);
+for (const [name, path] of sources) {
+  const license = (await readFile(path, 'utf8')).split(/\r?\n/).map((line) => line.trimEnd()).join('\n');
+  sections.push(`${name}\n\n${license}`);
+}
 await writeFile(new URL('../public/LICENSES.txt', import.meta.url), sections.join('\n\n'));
