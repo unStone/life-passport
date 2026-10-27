@@ -1,0 +1,101 @@
+{
+  "payload_bytes": 156,
+  "rs_parity_bytes": 32,
+  "rs_total_bytes": 188,
+  "byte_corruption": [
+    {
+      "errors": 0,
+      "known_erasures": 0,
+      "trials": 100,
+      "exact_recoveries": 100,
+      "rejected": 0,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 8,
+      "known_erasures": 0,
+      "trials": 100,
+      "exact_recoveries": 100,
+      "rejected": 0,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 16,
+      "known_erasures": 0,
+      "trials": 100,
+      "exact_recoveries": 100,
+      "rejected": 0,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 17,
+      "known_erasures": 0,
+      "trials": 100,
+      "exact_recoveries": 0,
+      "rejected": 100,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 0,
+      "known_erasures": 32,
+      "trials": 100,
+      "exact_recoveries": 100,
+      "rejected": 0,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 0,
+      "known_erasures": 33,
+      "trials": 100,
+      "exact_recoveries": 0,
+      "rejected": 100,
+      "wrong_crc_accepted": 0
+    },
+    {
+      "errors": 8,
+      "known_erasures": 16,
+      "trials": 100,
+      "exact_recoveries": 100,
+      "rejected": 0,
+      "wrong_crc_accepted": 0
+    }
+  ],
+  "burst_model": [
+    {
+      "interleaved": false,
+      "consecutive_corrupt_bytes": 12,
+      "same_32_parity_bytes": true,
+      "exact_recovery": false
+    },
+    {
+      "interleaved": true,
+      "consecutive_corrupt_bytes": 12,
+      "same_32_parity_bytes": true,
+      "exact_recovery": true
+    }
+  ],
+  "packet_erasure_model": {
+    "source_shards": 10,
+    "total_shards": 14,
+    "bytes_per_shard": 16,
+    "lost_frames": 4,
+    "all_loss_subsets_tested": 1001,
+    "all_recovered": true,
+    "frame_headers_audio_inner_fec_excluded": true
+  },
+  "physical_acoustic_test": "NOT RUN",
+  "independent_frame_loss_model": [
+    {
+      "loss_probability": 0.1,
+      "ten_data_frames_one_pass": 0.3486784401000001,
+      "ten_data_plus_four_parity_one_pass": 0.9907697875441506,
+      "ten_data_frames_two_passes": 0.9043820750088044
+    },
+    {
+      "loss_probability": 0.2,
+      "ten_data_frames_one_pass": 0.10737418240000006,
+      "ten_data_plus_four_parity_one_pass": 0.8701603741696006,
+      "ten_data_frames_two_passes": 0.6648326359915008
+    }
+  ]
+}

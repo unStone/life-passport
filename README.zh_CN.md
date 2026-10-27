@@ -56,7 +56,8 @@
 固件、原始私有日志和本地环境缓存不进入Git。
 
 参见[应用说明](docs/game-of-life.md)、[外部种子状态及BLE协议](docs/mobile-control.md)
-和[上游文档索引](docs/README.md)。保留的`mobile/`目录属于探索原型，不是已经选定的种子共享方式。
+、[压缩与声音抗噪调研](docs/seed-transport-research.zh_CN.md)和[上游文档索引](docs/README.md)。
+保留的`mobile/`目录属于探索原型，不是已经选定的种子共享方式。
 
 ## 许可
 

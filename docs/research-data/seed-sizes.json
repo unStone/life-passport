@@ -1,0 +1,260 @@
+{
+  "board": [
+    36,
+    32
+  ],
+  "raw_bytes": 144,
+  "common_object_header_and_crc_excluded": true,
+  "life_source_sha256": "430ceb2206b34c8844ee420c3045472c2587259bbf3868f32b71515773bddaba",
+  "python": "3.9.6",
+  "zlib": "1.2.12",
+  "mode_byte_included": true,
+  "firmware_cases": [
+    {
+      "name": "empty",
+      "population": 0,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 3,
+        "sparse_dead": 1587,
+        "constant": 1,
+        "enumerative_live": 3,
+        "deflate": 7
+      },
+      "best": "constant",
+      "best_bytes": 1
+    },
+    {
+      "name": "glider",
+      "population": 5,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 10,
+        "sparse_dead": 1581,
+        "bbox_bitmap": 6,
+        "enumerative_live": 9,
+        "deflate": 16
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 6
+    },
+    {
+      "name": "pulsar",
+      "population": 48,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 69,
+        "sparse_dead": 1521,
+        "bbox_bitmap": 26,
+        "enumerative_live": 39,
+        "deflate": 31
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 26
+    },
+    {
+      "name": "blinker",
+      "population": 3,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 8,
+        "sparse_dead": 1583,
+        "bbox_bitmap": 5,
+        "enumerative_live": 7,
+        "deflate": 11
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 5
+    },
+    {
+      "name": "spaceship",
+      "population": 9,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 16,
+        "sparse_dead": 1575,
+        "bbox_bitmap": 7,
+        "enumerative_live": 13,
+        "deflate": 19
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 7
+    },
+    {
+      "name": "random28_firmware",
+      "population": 321,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 445,
+        "sparse_dead": 1146,
+        "bbox_bitmap": 148,
+        "enumerative_live": 126,
+        "deflate": 150
+      },
+      "best": "enumerative_live",
+      "best_bytes": 126
+    },
+    {
+      "name": "r0",
+      "population": 5,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 10,
+        "sparse_dead": 1581,
+        "bbox_bitmap": 6,
+        "enumerative_live": 9,
+        "deflate": 16
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 6
+    },
+    {
+      "name": "r10",
+      "population": 11,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 19,
+        "sparse_dead": 1572,
+        "bbox_bitmap": 8,
+        "enumerative_live": 14,
+        "deflate": 23
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 8
+    },
+    {
+      "name": "r30",
+      "population": 27,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 41,
+        "sparse_dead": 1550,
+        "bbox_bitmap": 18,
+        "enumerative_live": 26,
+        "deflate": 34
+      },
+      "best": "bbox_bitmap",
+      "best_bytes": 18
+    },
+    {
+      "name": "r50",
+      "population": 64,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 91,
+        "sparse_dead": 1499,
+        "bbox_bitmap": 53,
+        "enumerative_live": 48,
+        "deflate": 51
+      },
+      "best": "enumerative_live",
+      "best_bytes": 48
+    },
+    {
+      "name": "r100",
+      "population": 31,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 46,
+        "sparse_dead": 1545,
+        "bbox_bitmap": 70,
+        "enumerative_live": 29,
+        "deflate": 41
+      },
+      "best": "enumerative_live",
+      "best_bytes": 29
+    },
+    {
+      "name": "r300",
+      "population": 26,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 39,
+        "sparse_dead": 1552,
+        "bbox_bitmap": 61,
+        "enumerative_live": 25,
+        "deflate": 33
+      },
+      "best": "enumerative_live",
+      "best_bytes": 25
+    },
+    {
+      "name": "full",
+      "population": 1152,
+      "bytes_including_one_mode_byte": {
+        "bitmap": 145,
+        "sparse_live": 1587,
+        "sparse_dead": 3,
+        "bbox_bitmap": 148,
+        "constant": 1,
+        "enumerative_dead": 3,
+        "deflate": 7
+      },
+      "best": "constant",
+      "best_bytes": 1
+    }
+  ],
+  "random_groups": [
+    {
+      "density_percent": 1,
+      "samples": 100,
+      "min": 7,
+      "max": 21,
+      "median": 14.0,
+      "mean": 14.2
+    },
+    {
+      "density_percent": 5,
+      "samples": 100,
+      "min": 33,
+      "max": 53,
+      "median": 44.0,
+      "mean": 44.69
+    },
+    {
+      "density_percent": 10,
+      "samples": 100,
+      "min": 62,
+      "max": 80,
+      "median": 70.0,
+      "mean": 70.36
+    },
+    {
+      "density_percent": 28,
+      "samples": 100,
+      "min": 120,
+      "max": 132,
+      "median": 126.0,
+      "mean": 126.04
+    },
+    {
+      "density_percent": 50,
+      "samples": 100,
+      "min": 145,
+      "max": 145,
+      "median": 145.0,
+      "mean": 145
+    },
+    {
+      "density_percent": 90,
+      "samples": 100,
+      "min": 59,
+      "max": 79,
+      "median": 70.0,
+      "mean": 70.07
+    },
+    {
+      "density_percent": 99,
+      "samples": 100,
+      "min": 8,
+      "max": 23,
+      "median": 15.0,
+      "mean": 14.93
+    }
+  ],
+  "bernoulli_entropy_bytes_not_a_per_board_minimum": {
+    "0.28": 123.1849167206588,
+    "0.5": 144.0
+  },
+  "roundtrips": 713
+}

@@ -57,6 +57,7 @@ The tested merged image is `8fc2e34c775f65c40a67b969eda3a416958a2ac3035e3c376ff2
 Firmware, private logs and local environment caches are excluded from Git.
 
 See [application details](docs/game-of-life.md), [external seed status and BLE protocol](docs/mobile-control.md),
+the [compression and acoustic reliability research](docs/seed-transport-research.md),
 and the [upstream documentation index](docs/README.md). The retained `mobile/` directory
 is an exploratory prototype, not the selected seed-sharing method.
 

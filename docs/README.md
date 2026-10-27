@@ -207,6 +207,7 @@ provide reference material. Choose the entry that matches your task.
 | --- | --- |
 | [Development](development/README.md) | AI workflow, engineering conventions, CI, and release guidance |
 | [Game of Life](game-of-life.md) | This branch's offline cellular automaton, controls, font pipeline, and acceptance checks |
+| [Seed compression and acoustic reliability](seed-transport-research.md) | Fixed-board encoding measurements, error correction, erasure recovery and audio resource experiments |
 | [Mobile seed editor](mobile-control.md) | Android/iOS editor, voice commands, BLE transfer protocol and physical confirmation |
 | [AI skills](../skills/README.md) | Development, environment setup, builds, device testing, and debugging |
 | [Hardware](hardware-design/README.md) | Board facts, interface boundaries, acceptance checklists, and troubleshooting |

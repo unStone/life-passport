@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Size: 16 px
  * Bpp: 4
- * Opts: --font /Users/chenlei/Documents/Codex/2026-10-26/https-gitee-com-folotoy-ai-passport/ai-passport/work/NotoSansSC-Medium.ttf --range 0x20-0x7e --symbols 一三上下世两为之五亡交他代停入其具再冲况列则到前化单发取变后向启命器四回图块型外奏始子存宇完宙定密居工左已布应度开待循情戏扩择持按换接播收放散整新星暂替有机格案次步法活消游滑演点烁牙环生用画界白的相确种秒稳空等细绕续编缘群翔胞脉航船节蓝行认请调轻辑边返进连送选速邻重鉴长闪限随飞，： --size 16 --bpp 4 --format lvgl --no-compress --no-prefilter --lv-font-name life_font_16 --lv-include lvgl.h --output /Users/chenlei/Documents/Codex/2026-10-26/https-gitee-com-folotoy-ai-passport/ai-passport/assets/fonts/life_font_16.c
+ * Opts: --font work/NotoSansSC-Medium.ttf --range 0x20-0x7e --symbols 一三上下世两为之五亡交他代停入其具再冲况列则到前化单发取变后向启命器四回图块型外奏始子存宇完宙定密居工左已布应度开待循情戏扩择持按换接播收放散整新星暂替有机格案次步法活消游滑演点烁牙环生用画界白的相确种秒稳空等细绕续编缘群翔胞脉航船节蓝行认请调轻辑边返进连送选速邻重鉴长闪限随飞，： --size 16 --bpp 4 --format lvgl --no-compress --no-prefilter --lv-font-name life_font_16 --lv-include lvgl.h --output assets/fonts/life_font_16.c
  ******************************************************************************/
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE

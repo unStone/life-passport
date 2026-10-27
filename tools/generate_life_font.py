@@ -51,12 +51,12 @@ def main():
     subsetter.subset(font)
     font.save(intermediate)
     command = [str(ROOT / "tools/font/node_modules/.bin/lv_font_conv"),
-               "--font", str(intermediate), "--range", "0x20-0x7e",
+               "--font", str(intermediate.relative_to(ROOT)), "--range", "0x20-0x7e",
                "--symbols", "".join(chr(cp) for cp in points if cp > 126),
                "--size", "16", "--bpp", "4", "--format", "lvgl",
                "--no-compress", "--no-prefilter", "--lv-font-name", "life_font_16",
-               "--lv-include", "lvgl.h", "--output", str(generated)]
-    subprocess.run(command, check=True)
+               "--lv-include", "lvgl.h", "--output", str(generated.relative_to(ROOT))]
+    subprocess.run(command, cwd=ROOT, check=True)
     generated.write_text(generated.read_text().rstrip() + "\n")
     (FONT_DIR / "NOTICE.txt").write_text(
         copyright_notice + "\n\nDerived Noto Sans SC glyph subset at weight 500.\n"

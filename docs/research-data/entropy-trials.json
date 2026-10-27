@@ -1,0 +1,264 @@
+{
+  "constriction": "0.4.2",
+  "numpy": "1.26.4",
+  "board": [
+    36,
+    32
+  ],
+  "source_sha256": "430ceb2206b34c8844ee420c3045472c2587259bbf3868f32b71515773bddaba",
+  "word_size_bits": 32,
+  "common_object_header_and_crc_excluded": true,
+  "mode_and_model_parameters_included": true,
+  "firmware_cases": [
+    {
+      "name": "empty",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 1,
+        "range_fitted": 6,
+        "ans_fitted": 2,
+        "range_four_contexts": 9,
+        "ans_four_contexts": 5
+      }
+    },
+    {
+      "name": "glider",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 41,
+        "range_fitted": 10,
+        "ans_fitted": 10,
+        "range_four_contexts": 13,
+        "ans_four_contexts": 13
+      }
+    },
+    {
+      "name": "pulsar",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 81,
+        "ans_fixed28": 61,
+        "range_fitted": 42,
+        "ans_fitted": 38,
+        "range_four_contexts": 33,
+        "ans_four_contexts": 33
+      }
+    },
+    {
+      "name": "blinker",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 41,
+        "range_fitted": 6,
+        "ans_fitted": 10,
+        "range_four_contexts": 9,
+        "ans_four_contexts": 13
+      }
+    },
+    {
+      "name": "spaceship",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 45,
+        "range_fitted": 14,
+        "ans_fitted": 14,
+        "range_four_contexts": 13,
+        "ans_four_contexts": 17
+      }
+    },
+    {
+      "name": "random28_firmware",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 125,
+        "ans_fixed28": 129,
+        "range_fitted": 126,
+        "ans_fitted": 130,
+        "range_four_contexts": 129,
+        "ans_four_contexts": 133
+      }
+    },
+    {
+      "name": "r0",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 41,
+        "range_fitted": 10,
+        "ans_fitted": 10,
+        "range_four_contexts": 9,
+        "ans_four_contexts": 13
+      }
+    },
+    {
+      "name": "r10",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 73,
+        "ans_fixed28": 49,
+        "range_fitted": 14,
+        "ans_fitted": 18,
+        "range_four_contexts": 13,
+        "ans_four_contexts": 13
+      }
+    },
+    {
+      "name": "r30",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 77,
+        "ans_fixed28": 49,
+        "range_fitted": 26,
+        "ans_fitted": 26,
+        "range_four_contexts": 21,
+        "ans_four_contexts": 25
+      }
+    },
+    {
+      "name": "r50",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 81,
+        "ans_fixed28": 57,
+        "range_fitted": 50,
+        "ans_fitted": 46,
+        "range_four_contexts": 29,
+        "ans_four_contexts": 33
+      }
+    },
+    {
+      "name": "r100",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 77,
+        "ans_fixed28": 61,
+        "range_fitted": 30,
+        "ans_fitted": 30,
+        "range_four_contexts": 21,
+        "ans_four_contexts": 25
+      }
+    },
+    {
+      "name": "r300",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 77,
+        "ans_fixed28": 61,
+        "range_fitted": 26,
+        "ans_fitted": 26,
+        "range_four_contexts": 21,
+        "ans_four_contexts": 21
+      }
+    },
+    {
+      "name": "full",
+      "bytes": {
+        "bitmap": 145,
+        "range_fixed28": 265,
+        "ans_fixed28": 269,
+        "range_fitted": 6,
+        "ans_fitted": 6,
+        "range_four_contexts": 9,
+        "ans_four_contexts": 13
+      }
+    }
+  ],
+  "random_groups": [
+    {
+      "density_percent": 1,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 73.0,
+        "ans_fixed28": 73.0,
+        "range_fitted": 14.0,
+        "ans_fitted": 18.0,
+        "range_four_contexts": 17.0,
+        "ans_four_contexts": 21.0
+      }
+    },
+    {
+      "density_percent": 5,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 81.0,
+        "ans_fixed28": 85.0,
+        "range_fitted": 46.0,
+        "ans_fitted": 46.0,
+        "range_four_contexts": 49.0,
+        "ans_four_contexts": 49.0
+      }
+    },
+    {
+      "density_percent": 10,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 93.0,
+        "ans_fixed28": 93.0,
+        "range_fitted": 70.0,
+        "ans_fitted": 74.0,
+        "range_four_contexts": 73.0,
+        "ans_four_contexts": 77.0
+      }
+    },
+    {
+      "density_percent": 28,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 125.0,
+        "ans_fixed28": 129.0,
+        "range_fitted": 126.0,
+        "ans_fitted": 130.0,
+        "range_four_contexts": 129.0,
+        "ans_four_contexts": 133.0
+      }
+    },
+    {
+      "density_percent": 50,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 169.0,
+        "ans_fixed28": 173.0,
+        "range_fitted": 150.0,
+        "ans_fitted": 150.0,
+        "range_four_contexts": 149.0,
+        "ans_four_contexts": 153.0
+      }
+    },
+    {
+      "density_percent": 90,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 249.0,
+        "ans_fixed28": 249.0,
+        "range_fitted": 70.0,
+        "ans_fitted": 74.0,
+        "range_four_contexts": 73.0,
+        "ans_four_contexts": 77.0
+      }
+    },
+    {
+      "density_percent": 99,
+      "samples": 100,
+      "median_bytes": {
+        "bitmap": 145.0,
+        "range_fixed28": 265.0,
+        "ans_fixed28": 269.0,
+        "range_fitted": 18.0,
+        "ans_fitted": 18.0,
+        "range_four_contexts": 21.0,
+        "ans_four_contexts": 21.0
+      }
+    }
+  ],
+  "physical_decoder_test": "NOT RUN"
+}

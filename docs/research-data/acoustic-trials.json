@@ -1,0 +1,268 @@
+{
+  "ggwave_commit": "060aec73dd7123ccac200442f75bdc7369795ffe",
+  "fixed_payload_bytes": 24,
+  "sample_rate": 24000,
+  "library_sha256": "8310f82b99e08a6418da68658a6f9f79d570b118d97443385b339d9f62bf01f3",
+  "fft_samples": 512,
+  "microphone_format": "signed 16-bit PCM",
+  "noise_in_silence": true,
+  "physical_test": "NOT RUN",
+  "channels": [
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "clean",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_20",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_10",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_5",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_0",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_-5",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_-10",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "snr_-15",
+      "trials": 10,
+      "exact_recoveries": 0,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "gain_0.1",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "clip_0.04",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "dropout_80",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "dropout_200",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "dropout_500",
+      "trials": 10,
+      "exact_recoveries": 0,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "dropout_1000",
+      "trials": 10,
+      "exact_recoveries": 0,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "echo_60ms",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "DT_FASTEST",
+      "condition": "speed_1.01",
+      "trials": 10,
+      "exact_recoveries": 0,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 2.048
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "clean",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_20",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 1,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_10",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_5",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_0",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 1,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_-5",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_-10",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "snr_-15",
+      "trials": 10,
+      "exact_recoveries": 9,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "gain_0.1",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "clip_0.04",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "dropout_80",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "dropout_200",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "dropout_500",
+      "trials": 10,
+      "exact_recoveries": 9,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "dropout_1000",
+      "trials": 10,
+      "exact_recoveries": 0,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "echo_60ms",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    },
+    {
+      "protocol": "MT_FASTEST",
+      "condition": "speed_1.01",
+      "trials": 10,
+      "exact_recoveries": 10,
+      "wrong_payloads_rejected": 0,
+      "waveform_seconds": 4.096
+    }
+  ]
+}
