@@ -11,6 +11,10 @@ usage() {
 run_static_checks() {
     local actionlint_bin
     local test_dir
+    local dead_strip="-Wl,--gc-sections"
+    if [[ "$(uname -s)" == Darwin ]]; then
+        dead_strip="-Wl,-dead_strip"
+    fi
 
     python3 tools/check_repo.py
 
@@ -19,11 +23,17 @@ run_static_checks() {
         actionlint_bin="$(command -v actionlint || true)"
     fi
     if [[ -z "${actionlint_bin}" || ! -x "${actionlint_bin}" ]]; then
-        actionlint_bin="$(./tools/install-actionlint.sh)"
+        actionlint_bin="$(./tools/install-actionlint.sh "${repo_root}/work/actionlint")"
     fi
     "${actionlint_bin}" -color .github/workflows/*.yml
 
-    test_dir="$(mktemp -d /tmp/ai-passport-host-tests.XXXXXX)"
+    mkdir -p "${repo_root}/work"
+    test_dir="$(mktemp -d "${repo_root}/work/host-tests.XXXXXX")"
+    "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
+        tests/test_life.c main/life.c -o "${test_dir}/test_life"
+    "${test_dir}/test_life"
+    python3 tools/generate_life_font.py --check
+    python3 tools/generate_mobile_font.py --check
     "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
         tests/test_ui_pixel_math.c main/ui_pixel_math.c \
         -o "${test_dir}/test_ui_pixel_math"
@@ -60,7 +70,7 @@ run_static_checks() {
     for demo in audio low_power ble wifi; do
         "${CC:-cc}" -std=c11 -Wall -Wextra -Werror \
             -ffunction-sections -fdata-sections -Itests/demo_stubs -Imain \
-            "tests/test_demo_${demo}_runtime.c" -Wl,--gc-sections \
+            "tests/test_demo_${demo}_runtime.c" "${dead_strip}" \
             -o "${test_dir}/test_demo_${demo}_runtime"
         "${test_dir}/test_demo_${demo}_runtime"
     done
@@ -82,8 +92,9 @@ run_firmware_checks() (
         return 1
     fi
 
-    validation_build_dir="$(mktemp -d /tmp/ai-passport-firmware.XXXXXX)"
-    trap 'case "${validation_build_dir}" in /tmp/ai-passport-firmware.*) rm -rf -- "${validation_build_dir}" ;; esac' EXIT
+    mkdir -p "${repo_root}/work"
+    validation_build_dir="$(mktemp -d "${repo_root}/work/firmware.XXXXXX")"
+    trap 'case "${validation_build_dir}" in "${repo_root}"/work/firmware.*) rm -rf -- "${validation_build_dir}" ;; esac' EXIT
 
     SDKCONFIG_DEFAULTS="${repo_root}/sdkconfig.defaults" \
         idf.py -B "${validation_build_dir}" \
@@ -105,6 +116,8 @@ case "${mode}" in
     --all)
         run_static_checks
         run_firmware_checks
+        python3 tools/test_life_wire.py
+        python3 tools/test_life_ui.py
         ;;
     --static)
         run_static_checks

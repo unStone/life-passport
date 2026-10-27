@@ -1,16 +1,15 @@
 idf_component_register(
     SRCS "main.c"
-         "demo_navigation.c"
-         "ui_pixel.c"
-         "ui_pixel_math.c"
-         "demo_display.c"
-         "demo_button.c"
-         "demo_audio.c"
-         "demo_battery.c"
-         "demo_radio.c"
-         "demo_wifi.c"
-         "demo_ble.c"
-         "demo_low_power.c"
+         "life.c"
+         "life_ui.c"
+         "life_wire.c"
+         "life_ble.c"
+         "../assets/fonts/life_font_16.c"
     INCLUDE_DIRS "."
-    REQUIRES bsp bt esp_event esp_hw_support esp_netif esp_timer esp_wifi nvs_flash
+    REQUIRES bsp esp_hw_support esp_timer esp_system esp_driver_gpio bt nvs_flash json esp_rom
 )
+
+# This application's JSON contract has object/array depth two. Bound the official
+# parser recursion before untrusted BLE input reaches the 4 KB host task stack.
+idf_component_get_property(life_json_library json COMPONENT_LIB)
+target_compile_definitions(${life_json_library} PRIVATE CJSON_NESTING_LIMIT=4)

@@ -1,0 +1,7 @@
+{
+  "name": "passport-life-font-tools",
+  "private": true,
+  "version": "1.0.0",
+  "engines": { "node": "22.x" },
+  "devDependencies": { "lv_font_conv": "1.5.3" }
+}
