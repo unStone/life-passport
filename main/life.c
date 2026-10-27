@@ -108,15 +108,11 @@ unsigned life_app_fps(const life_app_t *app) {
 void life_app_init(life_app_t *app, uint32_t seed, uint64_t now_ms) {
     assert(app);
     memset(app, 0, sizeof(*app));
-    app->random_seed = seed;
     app->game.wrap = true;
     app->speed = 2;
-    app->cursor_x = LIFE_COLS / 2;
-    app->cursor_y = LIFE_ROWS / 2;
     app->last_input_ms = app->last_step_ms = now_ms;
     app->running = true;
-    app->seed = LIFE_R_PENTOMINO;
-    life_seed(&app->game, app->seed, seed);
+    life_seed(&app->game, LIFE_R_PENTOMINO, seed);
     app->seed_template = app->game;
 }
 
@@ -131,15 +127,6 @@ life_idle_t life_app_idle(const life_app_t *app, uint64_t now_ms) {
     return idle >= 30000 ? LIFE_DIM : LIFE_BRIGHT;
 }
 
-static void load_seed(life_app_t *app, life_seed_t seed) {
-    app->seed = seed;
-    life_seed(&app->game, seed, ++app->random_seed);
-    app->seed_template = app->game;
-    app->custom_seed = false;
-    app->running = false;
-    app->page = LIFE_WATCH;
-}
-
 bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
     assert(app && input >= LIFE_UP && input <= LIFE_OK_LONG);
     bool wake = life_app_idle(app, now_ms) >= LIFE_BLANK;
@@ -149,7 +136,6 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         if (input == LIFE_OK) {
             app->remote_status = LIFE_REMOTE_APPLIED;
             app->seed_template = app->game;
-            app->custom_seed = true;
             app->audio_requested = false;
             app->page = LIFE_WATCH;
         } else if (input == LIFE_OK_LONG) {
@@ -161,29 +147,16 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         }
         return false;
     }
-    if (app->page == LIFE_EDIT) {
-        switch (input) {
-        case LIFE_UP: app->cursor_x = (app->cursor_x + LIFE_COLS - 1) % LIFE_COLS; break;
-        case LIFE_DOWN: app->cursor_x = (app->cursor_x + 1) % LIFE_COLS; break;
-        case LIFE_UP_LONG: app->cursor_y = (app->cursor_y + LIFE_ROWS - 1) % LIFE_ROWS; break;
-        case LIFE_DOWN_LONG: app->cursor_y = (app->cursor_y + 1) % LIFE_ROWS; break;
-        case LIFE_OK:
-            life_set(&app->game, app->cursor_x, app->cursor_y,
-                     !app->game.cells[app->cursor_y][app->cursor_x]);
-            app->game.generation = 0;
-            app->game.births = app->game.deaths = 0;
-            app->seed_template = app->game;
-            app->custom_seed = true;
-            break;
-        case LIFE_OK_LONG: app->page = LIFE_WATCH; break;
-        }
-        return false;
-    }
     if (input == LIFE_OK_LONG) {
         app->audio_requested = false;
         app->running = false;
         if (app->page == LIFE_WATCH) { app->page = LIFE_TOOLS; app->selection = 0; }
         else if (app->page == LIFE_TOOLS) app->page = LIFE_WATCH;
+        else if (app->page == LIFE_INFO) { app->page = LIFE_TOOLS; app->selection = 3; }
+        else if (app->page == LIFE_RULES || app->page == LIFE_ABOUT) {
+            app->selection = app->page == LIFE_ABOUT ? 1 : 0;
+            app->page = LIFE_INFO;
+        }
         else { app->page = LIFE_TOOLS; app->selection = 0; }
         return false;
     }
@@ -198,34 +171,35 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms) {
         if (input == LIFE_OK) app->audio_requested = !app->audio_requested;
         return false;
     }
-    if (app->page == LIFE_HELP) {
-        if (input == LIFE_OK) app->page = LIFE_TOOLS;
+    if (app->page == LIFE_RULES || app->page == LIFE_ABOUT) {
+        if (input == LIFE_OK) {
+            app->selection = app->page == LIFE_ABOUT ? 1 : 0;
+            app->page = LIFE_INFO;
+        }
         return false;
     }
     if (input == LIFE_UP && app->selection) --app->selection;
-    unsigned maximum = app->page == LIFE_LIBRARY ? LIFE_SEED_COUNT - 1 : LIFE_TOOL_COUNT - 1;
+    unsigned maximum = app->page == LIFE_INFO ? LIFE_INFO_COUNT - 1 : LIFE_TOOL_COUNT - 1;
     if (input == LIFE_DOWN && app->selection < maximum) ++app->selection;
     if (input != LIFE_OK) return false;
-    if (app->page == LIFE_LIBRARY) {
-        load_seed(app, (life_seed_t)app->selection);
+    if (app->page == LIFE_INFO) {
+        app->page = app->selection == 0 ? LIFE_RULES : LIFE_ABOUT;
         return false;
     }
     switch (app->selection) {
-    case 0: app->page = LIFE_LIBRARY; app->selection = app->seed; break;
-    case 1:
-        if (app->custom_seed) {
-            bool wrap = app->game.wrap;
-            app->game = app->seed_template;
-            app->game.wrap = wrap;
-            app->page = LIFE_WATCH;
-        }
-        else load_seed(app, app->seed);
+    case 0: app->page = LIFE_LINK; app->audio_requested = true; break;
+    case 1: {
+        bool wrap = app->game.wrap;
+        app->game = app->seed_template;
+        app->game.wrap = wrap;
+        app->game.generation = app->game.births = app->game.deaths = 0;
+        app->game.stable = false;
+        app->page = LIFE_WATCH;
         break;
-    case 2: app->page = LIFE_EDIT; break;
-    case 3: app->game.wrap = !app->game.wrap; app->game.stable = false; break;
-    case 4: app->page = LIFE_LINK; app->audio_requested = true; break;
-    case 5: app->page = LIFE_HELP; break;
-    case 6: app->page = LIFE_WATCH; break;
+    }
+    case 2: app->game.wrap = !app->game.wrap; app->game.stable = false; break;
+    case 3: app->page = LIFE_INFO; app->selection = 0; break;
+    case 4: app->page = LIFE_WATCH; break;
     }
     return false;
 }

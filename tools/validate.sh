@@ -36,6 +36,10 @@ run_static_checks() {
         tests/test_life_audio_protocol.c main/life_audio_protocol.c main/life.c \
         -lz -o "${test_dir}/test_life_audio"
     "${test_dir}/test_life_audio"
+    "${CC:-cc}" -std=c11 -Wall -Wextra -Werror -Imain \
+        tests/test_life_audio_board.c main/life_audio_board.c main/life_audio_protocol.c main/life.c \
+        -lz -o "${test_dir}/test_life_audio_board"
+    "${test_dir}/test_life_audio_board"
     python3 tools/generate_life_font.py --check
     python3 tools/generate_mobile_font.py --check
     python3 tools/generate_web_font.py --check

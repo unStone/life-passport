@@ -63,8 +63,8 @@ export function readFrame(frame) {
   const checksum = new DataView(frame.buffer, frame.byteOffset, frame.byteLength).getUint32(12, true);
   if (checksum !== crc32(frame.subarray(0, 12))) throw new Error('CRC校验失败');
   const type = frame[3] & 3;
-  if (frame[0] !== 76 || frame[1] !== 80 || frame[2] !== 1 || (frame[3] & 224) || type > 1 || (!type && frame[3])) throw new Error('不支持该帧格式');
-  const payload = frame.slice(5, 12), result = { kind: type ? 'key' : 'diag', seq: frame[4], payload, checksum };
-  if (type) result.key = keyText(payload.reduce((n, byte, i) => n | (BigInt(byte) << BigInt(i * 8)), 0n));
+  if (frame[0] !== 76 || frame[1] !== 80 || frame[2] !== 1 || (frame[3] & (type < 2 ? 224 : 128)) || (!type && frame[3])) throw new Error('不支持该帧格式');
+  const payload = frame.slice(5, 12), result = { kind: ['diag', 'key', 'chunk', 'header'][type], type, flags: frame[3], seq: frame[4], payload, checksum };
+  if (type === 1) result.key = keyText(payload.reduce((n, byte, i) => n | (BigInt(byte) << BigInt(i * 8)), 0n));
   return result;
 }

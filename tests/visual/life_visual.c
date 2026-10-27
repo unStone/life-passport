@@ -132,27 +132,6 @@ int main(int argc, char **argv) {
     action(&app, LIFE_OK_LONG, &time);
     capture(&app, "tools");
     action(&app, LIFE_OK, &time);
-    for (int i = 0; i < 5; ++i) action(&app, LIFE_UP, &time);
-    capture(&app, "library");
-    action(&app, LIFE_OK, &time);
-    action(&app, LIFE_OK, &time);
-    for (int frame = 0; frame < 16; ++frame) {
-        time += 200;
-        life_app_tick(&app, time);
-        capture(&app, NULL);
-    }
-    capture(&app, "pulsar");
-    action(&app, LIFE_OK_LONG, &time);
-    action(&app, LIFE_DOWN, &time);
-    action(&app, LIFE_DOWN, &time);
-    action(&app, LIFE_OK, &time);
-    action(&app, LIFE_OK, &time);
-    action(&app, LIFE_DOWN_LONG, &time);
-    capture(&app, "editor");
-    action(&app, LIFE_OK_LONG, &time);
-    action(&app, LIFE_OK_LONG, &time);
-    for (int i = 0; i < 4; ++i) action(&app, LIFE_DOWN, &time);
-    action(&app, LIFE_OK, &time);
     capture(&app, "phone");
     life_audio_view_t diagnostic = { .state = LIFE_CAPTURE_LISTENING, .dbfs = -32.5f,
         .frequency_hz = 984, .valid = 10, .rejected = 2, .duplicates = 1, .max_decode_us = 14500, .seq = 42,
@@ -166,9 +145,22 @@ int main(int argc, char **argv) {
     }
     assert(metric_found);
     action(&app, LIFE_OK_LONG, &time);
-    for (int i = 0; i < 5; ++i) action(&app, LIFE_DOWN, &time);
+    for (int i = 0; i < 3; ++i) action(&app, LIFE_DOWN, &time);
     action(&app, LIFE_OK, &time);
+    assert(app.page == LIFE_INFO);
+    capture(&app, "info");
+    action(&app, LIFE_OK, &time);
+    assert(app.page == LIFE_RULES);
     capture(&app, "rules");
+    action(&app, LIFE_OK, &time);
+    action(&app, LIFE_DOWN, &time);
+    action(&app, LIFE_OK, &time);
+    assert(app.page == LIFE_ABOUT);
+    capture(&app, "about");
+    app.page = LIFE_WATCH;
+    app.running = false;
+    life_seed(&app.game, LIFE_PULSAR, 1);
+    capture(&app, "pulsar");
     app.page = LIFE_WATCH;
     app.running = false;
     life_clear(&app.game, true);
@@ -191,7 +183,7 @@ int main(int argc, char **argv) {
     /* Revisit all screens under the real allocator, catching retained-object leaks. */
     for (int i = 0; i < 300; ++i) {
         app.page = (life_page_t)(i % 7);
-        app.selection = i % 7;
+        app.selection = app.page == LIFE_TOOLS ? i % LIFE_TOOL_COUNT : app.page == LIFE_INFO ? i % LIFE_INFO_COUNT : 0;
         life_ui_refresh(&app, i % 2 ? 100 : -1);
         lv_refr_now(NULL);
     }

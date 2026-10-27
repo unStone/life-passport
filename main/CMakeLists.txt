@@ -6,6 +6,7 @@ idf_component_register(
          "life_ble.c"
          "life_audio.cpp"
          "life_audio_protocol.c"
+         "life_audio_board.c"
          "../assets/fonts/life_font_16.c"
     INCLUDE_DIRS "."
     REQUIRES bsp esp_hw_support esp_timer esp_system esp_driver_gpio bt nvs_flash json esp_rom ggwave

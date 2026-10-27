@@ -4,9 +4,10 @@
 
 #define LIFE_AUDIO_FRAME_SIZE 16
 #define LIFE_KEY_LIMIT UINT64_C(3656158440062976)
-typedef enum { LIFE_AUDIO_FORMAT = -2, LIFE_AUDIO_CHECKSUM = -1, LIFE_AUDIO_DIAG = 0, LIFE_AUDIO_KEY = 1 } life_audio_result_t;
+typedef enum { LIFE_AUDIO_FORMAT = -2, LIFE_AUDIO_CHECKSUM = -1, LIFE_AUDIO_DIAG = 0, LIFE_AUDIO_KEY = 1, LIFE_AUDIO_CHUNK = 2, LIFE_AUDIO_HEADER = 3 } life_audio_result_t;
 typedef struct {
-    uint8_t seq, payload[7];
+    uint8_t seq, flags, payload[7];
+    uint32_t checksum;
     uint64_t key;
     life_remote_seed_t seed;
 } life_audio_packet_t;

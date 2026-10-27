@@ -74,9 +74,9 @@ export class Player {
     clearTimeout(this.deadline);
     if (this.source) { this.source.onended = null; this.source.stop(); this.source.disconnect(); this.source = null; }
   }
-  play(wave, loop, ended) {
+  play(wave, loop, ended, maxSeconds = 60) {
     this.stop();
-    if (this.context?.state !== 'running' || wave.sampleRate !== this.context.sampleRate) throw new Error('音频上下文与采样率不匹配');
+    if (this.context?.state !== 'running' || wave.sampleRate !== this.context.sampleRate || ![60, 180].includes(maxSeconds)) throw new Error('音频上下文、采样率或循环时长不匹配');
     const buffer = this.context.createBuffer(1, wave.samples.length, wave.sampleRate);
     buffer.copyToChannel(wave.samples, 0);
     const source = this.context.createBufferSource();
@@ -84,6 +84,6 @@ export class Player {
     this.source = source;
     source.onended = () => { source.disconnect(); if (this.source === source) this.source = null; ended(); };
     source.start();
-    if (loop) this.deadline = setTimeout(() => { this.stop(); ended(); }, 60000);
+    if (loop) this.deadline = setTimeout(() => { this.stop(); ended(); }, maxSeconds * 1000);
   }
 }

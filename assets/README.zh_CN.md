@@ -41,6 +41,11 @@ Flutter 资产目录；源字体同为字重500的开放许可 Noto Sans SC，�
 - 添加字库前评估 Flash 与内部 RAM 影响；ESP32-C3 无 PSRAM。
 - 不提交许可不允许分发的字库。
 
+## 种子图鉴
+
+`patterns/catalog.json`包含519个完整适配的Life Lexicon图案，记录来源、细胞数、尺寸、CRC和实测演化行为，同步至 `site/public/patterns/`，仅在用户打开图鉴时加载。
+`patterns/NOTICE.txt`与 `patterns/CC-BY-SA-3.0.txt`保留原始许可和贡献者，派生数据继续采用CC-BY-SA-3.0。生成与验证见[图鉴说明](../docs/pattern-catalog.zh_CN.md)。
+
 ## 图片（images）
 
 `images/life-controller.svg` 是本应用原创的滑翔机图标（MIT）。

@@ -208,6 +208,8 @@ provide reference material. Choose the entry that matches your task.
 | [Development](development/README.md) | AI workflow, engineering conventions, CI, and release guidance |
 | [Game of Life](game-of-life.md) | This branch's offline cellular automaton, controls, font pipeline, and acceptance checks |
 | [Acoustic seed laboratory](acoustic-lab.md) | Browser sender, LP1 protocol, diagnostic receiver and fourteen manual cases |
+| [World editor and browser reception](world-editor.md) | Desktop/touch drawing, preview, complete-board transport and microphone reception |
+| [Web pattern catalog](pattern-catalog.md) | 519 fitted named patterns, source/license, classification and reproducible data tools |
 | [Seed compression and acoustic reliability](seed-transport-research.md) | Fixed-board encoding measurements, error correction, erasure recovery and audio resource experiments |
 | [Mobile seed editor](mobile-control.md) | Android/iOS editor, voice commands, BLE transfer protocol and physical confirmation |
 | [AI skills](../skills/README.md) | Development, environment setup, builds, device testing, and debugging |

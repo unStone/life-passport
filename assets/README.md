@@ -48,6 +48,15 @@ subsets the same weight-500 source against the complete HTML and JavaScript UI.
 - Check Flash and internal-RAM impact before adding a font; the ESP32-C3 has no PSRAM.
 - Do not commit fonts whose license does not permit redistribution.
 
+## Pattern catalog
+
+`patterns/catalog.json` contains 519 complete fitted Life Lexicon diagrams and
+their source, population, bounds, CRC and measured behavior. It is mirrored to
+`site/public/patterns/` and loaded only when the user opens the catalog.
+`patterns/NOTICE.txt` and `patterns/CC-BY-SA-3.0.txt` retain the original license
+and contributors; derived data stays CC-BY-SA-3.0. See the
+[catalog methodology and tools](../docs/pattern-catalog.md).
+
 ## Images
 
 `images/life-controller.svg` is the application's original glider icon (MIT).

@@ -23,7 +23,7 @@
 #include <stdatomic.h>
 #include <stdlib.h>
 
-#define RETAINED_MAGIC 0x4C494631u
+#define RETAINED_MAGIC 0x4C494632u
 #define KEY_GUARD_MAX_US (10LL * 1000 * 1000)
 static const char *TAG = "life";
 static life_app_t s_app;

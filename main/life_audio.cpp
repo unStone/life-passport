@@ -1,5 +1,6 @@
 #include "life_audio.h"
 #include "life_audio_protocol.h"
+#include "life_audio_board.h"
 extern "C" {
 #include "bsp_audio.h"
 }
@@ -40,6 +41,7 @@ static void capture_task(void *) {
     int16_t samples[512];
     uint8_t last[16] = {};
     bool has_last = false;
+    life_board_rx_t board = {};
     int64_t next_metrics = 0;
     view.stage = 1;
     error = bsp_audio_wake();
@@ -77,10 +79,18 @@ static void capture_task(void *) {
             view.payload[0] = view.key[0] = 0;
             view.max_decode_us = 0;
             has_last = false;
+            life_board_reset(&board);
+            view.shards_received = view.shards_total = 0;
+            view.board_transfer = false;
         }
         error = bsp_audio_read(samples, sizeof(samples));
         if (error != ESP_OK) { view.stage = 3; break; }
         int64_t before = esp_timer_get_time();
+        if (life_board_expire(&board, before / 1000)) {
+            view.shards_received = view.shards_total = 0;
+            view.board_transfer = false;
+            ESP_LOGW(TAG, "incomplete board expired; waiting for a new header");
+        }
         uint64_t sum = 0;
         unsigned clipped = 0;
         for (int16_t sample : samples) {
@@ -104,18 +114,37 @@ static void capture_task(void *) {
             life_audio_result_t result = life_audio_packet_decode(data.data(), size, &packet);
             if (result < 0) ++view.rejected;
             else {
-                ++view.valid;
                 view.seq = packet.seq;
                 for (unsigned i = 0; i < 7; ++i) std::snprintf(view.payload + 2 * i, 3, "%02X", packet.payload[i]);
                 bool repeated = has_last && !std::memcmp(last, data.data(), 16);
-                view.duplicates += repeated;
+                bool ready = false, accepted = true;
+                life_remote_seed_t seed;
+                if (result == LIFE_AUDIO_CHUNK || result == LIFE_AUDIO_HEADER) {
+                    auto assembled = life_board_feed(&board, &packet, esp_timer_get_time() / 1000, &seed);
+                    accepted = assembled != LIFE_BOARD_REJECT;
+                    repeated = assembled == LIFE_BOARD_DUPLICATE;
+                    ready = assembled == LIFE_BOARD_COMPLETE;
+                    view.shards_received = board.received;
+                    view.shards_total = board.total;
+                    view.board_transfer = board.active;
+                    view.key[0] = 0;
+                } else if (result == LIFE_AUDIO_KEY && !repeated) {
+                    life_board_reset(&board);
+                    view.shards_received = view.shards_total = 0;
+                    view.board_transfer = false;
+                    life_key_format(packet.key, view.key);
+                    seed = packet.seed;
+                    ready = true;
+                }
+                if (accepted) { ++view.valid; view.duplicates += repeated; }
+                else ++view.rejected;
                 std::memcpy(last, data.data(), 16);
                 has_last = true;
-                ESP_LOGI(TAG, "CRC PASS seq=%u kind=%s data=%s duplicates=%lu", packet.seq,
-                         result == LIFE_AUDIO_KEY ? "key" : "diag", view.payload, (unsigned long)view.duplicates);
-                if (result == LIFE_AUDIO_KEY && !repeated) {
-                    life_key_format(packet.key, view.key);
-                    if (xQueueSend(s_seeds, &packet.seed, 0) != pdTRUE) { error = ESP_ERR_NO_MEM; view.stage = 5; break; }
+                ESP_LOGI(TAG, "frame seq=%u kind=%d accepted=%d board=%u/%u data=%s", packet.seq,
+                         (int)result, accepted, board.received, board.total, view.payload);
+                if (ready) {
+                    ESP_LOGI(TAG, "seed CRC PASS crc=%08lX", (unsigned long)seed.crc);
+                    if (xQueueSend(s_seeds, &seed, 0) != pdTRUE) { error = ESP_ERR_NO_MEM; view.stage = 5; break; }
                 }
             }
         } else if (size < 0) ++view.rejected;
@@ -190,6 +219,8 @@ void life_audio_clear(void) {
     xSemaphoreTake(s_lock, portMAX_DELAY);
     s_view.valid = s_view.rejected = s_view.duplicates = s_view.max_decode_us = 0;
     s_view.seq = 0;
+    s_view.shards_received = s_view.shards_total = 0;
+    s_view.board_transfer = false;
     s_view.payload[0] = s_view.key[0] = 0;
     xSemaphoreGive(s_lock);
 }

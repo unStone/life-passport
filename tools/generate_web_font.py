@@ -17,6 +17,9 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     text = (ROOT / "site/index.html").read_text() + "".join(path.read_text() for path in (ROOT / "site/src").glob("*.*"))
+    catalog = json.loads((ROOT / "assets/patterns/catalog.json").read_text())
+    text += "".join(item["label"] for item in catalog["categories"])
+    text += "".join(item["label"] + item["name"] + item["description"] for item in catalog["entries"])
     points = sorted(set(range(32, 127)) | {ord(c) for c in text if ord(c) > 127})
     if args.check:
         data = json.loads(MANIFEST.read_text())

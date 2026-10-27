@@ -48,9 +48,9 @@ life_audio_result_t life_audio_packet_decode(const uint8_t *data, size_t size, l
     uint32_t checksum = life_crc32(data, 12);
     if (checksum != received) return LIFE_AUDIO_CHECKSUM;
     unsigned type = data[3] & 3;
-    if (data[0] != 'L' || data[1] != 'P' || data[2] != 1 || (data[3] & 0xE0) || type > 1 ||
+    if (data[0] != 'L' || data[1] != 'P' || data[2] != 1 || (data[3] & (type < 2 ? 0xE0 : 0x80)) ||
         (!type && data[3])) return LIFE_AUDIO_FORMAT;
-    life_audio_packet_t parsed = { .seq = data[4] };
+    life_audio_packet_t parsed = { .seq = data[4], .flags = data[3], .checksum = checksum };
     memcpy(parsed.payload, data + 5, 7);
     if (type == 1) {
         for (unsigned i = 0; i < 7; ++i) parsed.key |= (uint64_t)data[5 + i] << (8 * i);
@@ -65,5 +65,5 @@ life_audio_result_t life_audio_packet_decode(const uint8_t *data, size_t size, l
         parsed.seed.crc = life_crc32(parsed.seed.bits, LIFE_BITS_SIZE);
     }
     *packet = parsed;
-    return type == 1 ? LIFE_AUDIO_KEY : LIFE_AUDIO_DIAG;
+    return (life_audio_result_t)type;
 }

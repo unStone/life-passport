@@ -13,6 +13,7 @@
   "dependencies": {
     "crc-32": "1.2.2",
     "ggwave": "0.4.0",
+    "logic-solver": "2.0.1",
     "wavefile": "11.0.0"
   },
   "devDependencies": {

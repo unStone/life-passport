@@ -22,7 +22,7 @@ The tools entry for acoustic reception starts listening again. Running simulatio
 
 ## LP1 protocol
 
-The fixed board is 36 columns × 32 rows, B3/S23. A ten-character, case-insensitive base36 key selects a reproducible initial board; this mode does not encode an arbitrary hand-painted bitmap.
+The fixed board is 36 columns × 32 rows, B3/S23. A ten-character, case-insensitive base36 key selects a reproducible initial board. The [LP1-B1 extension](world-editor.md) additionally transports arbitrary edited boards and supports PC/mobile browser reception; the table below defines the original short key/diagnostic packets.
 
 | Byte | Meaning |
 | --- | --- |

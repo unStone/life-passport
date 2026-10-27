@@ -5,8 +5,9 @@
 Research date: 2026-10-27. The target is an exact 36×32 binary board sent from a
 browser speaker to the AI Passport microphone, without installing a phone app.
 These are reproducible host experiments and candidate extensions. The current
-[LP1 laboratory](acoustic-lab.md) implements fixed 16-byte key/diagnostic reception;
-arbitrary-bitmap compression and outer erasure coding below remain research.
+[LP1 laboratory](acoustic-lab.md) implements fixed 16-byte key/diagnostic reception,
+and [LP1-B1](world-editor.md) implements raw/cropped/sparse edited-board transport.
+The enumerative/entropy and outer erasure extensions below remain research.
 
 ## Findings that affect the design
 

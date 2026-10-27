@@ -103,25 +103,24 @@ static void test_controls(void) {
     life_app_input(&app, LIFE_OK_LONG, 1001);
     assert(app.page == LIFE_TOOLS && !app.running);
     life_app_input(&app, LIFE_OK, 1002);
-    assert(app.page == LIFE_LIBRARY);
-    life_app_input(&app, LIFE_DOWN, 1003);
+    assert(app.page == LIFE_LINK && app.audio_requested);
     life_app_input(&app, LIFE_OK_LONG, 1004);
-    assert(app.page == LIFE_TOOLS && app.seed == LIFE_R_PENTOMINO);
-    app.selection = 2;
-    life_app_input(&app, LIFE_OK, 1005);
-    assert(app.page == LIFE_EDIT);
-    int x = app.cursor_x, y = app.cursor_y;
-    bool was_alive = app.game.cells[y][x] != 0;
-    life_app_input(&app, LIFE_OK, 1006);
-    assert(!!app.game.cells[y][x] != was_alive);
-    life_app_input(&app, LIFE_UP_LONG, 1007);
-    assert(app.cursor_y == (y + LIFE_ROWS - 1) % LIFE_ROWS);
-    life_app_input(&app, LIFE_OK_LONG, 1008);
-    assert(app.page == LIFE_WATCH && !app.running);
-    life_app_input(&app, LIFE_OK, 1010);
-    assert(app.running && !life_app_tick(&app, 1011));
-    life_app_input(&app, LIFE_OK_LONG, 1012);
+    assert(app.page == LIFE_TOOLS && !app.audio_requested);
     app.selection = 3;
+    life_app_input(&app, LIFE_OK, 1005);
+    assert(app.page == LIFE_INFO && app.selection == 0);
+    life_app_input(&app, LIFE_OK, 1006);
+    assert(app.page == LIFE_RULES);
+    life_app_input(&app, LIFE_OK_LONG, 1008);
+    assert(app.page == LIFE_INFO && app.selection == 0);
+    life_app_input(&app, LIFE_DOWN, 1009);
+    life_app_input(&app, LIFE_OK, 1010);
+    assert(app.page == LIFE_ABOUT);
+    life_app_input(&app, LIFE_OK, 1011);
+    assert(app.page == LIFE_INFO && app.selection == 1);
+    life_app_input(&app, LIFE_OK_LONG, 1012);
+    assert(app.page == LIFE_TOOLS && app.selection == 3);
+    app.selection = 2;
     bool wrap = app.game.wrap;
     life_app_input(&app, LIFE_OK, 1013);
     assert(app.game.wrap != wrap);
@@ -129,7 +128,10 @@ static void test_controls(void) {
     assert(life_app_idle(&app, 91014) == LIFE_BLANK);
     assert(life_app_idle(&app, 301014) == LIFE_SLEEP);
     assert(life_app_input(&app, LIFE_DOWN, 301015));
-    assert(app.page == LIFE_TOOLS && app.selection == 3);
+    assert(app.page == LIFE_TOOLS && app.selection == 2);
+    app.selection = 1;
+    life_app_input(&app, LIFE_OK, 301016);
+    assert(app.page == LIFE_WATCH && app.game.generation == 0 && !app.running && app.game.wrap != wrap);
 }
 
 static void test_remote_visibility(void) {
@@ -190,7 +192,7 @@ int main(void) {
     life_app_t listening;
     life_app_init(&listening, 1, 0);
     life_app_input(&listening, LIFE_OK_LONG, 1);
-    listening.selection = 4;
+    listening.selection = 0;
     life_app_input(&listening, LIFE_OK, 2);
     assert(listening.page == LIFE_LINK && listening.audio_requested);
     assert(life_app_idle(&listening, 600002) == LIFE_BRIGHT);
@@ -236,7 +238,7 @@ int main(void) {
     life_app_input(&remote_app, LIFE_OK, 105);
     assert(remote_app.remote_status == LIFE_REMOTE_APPLIED && !remote_app.running && remote_app.page == LIFE_WATCH);
     life_app_input(&remote_app, LIFE_OK_LONG, 106);
-    remote_app.selection = 3;
+    remote_app.selection = 2;
     life_app_input(&remote_app, LIFE_OK, 107);
     remote_app.selection = 1;
     life_app_input(&remote_app, LIFE_OK, 108);

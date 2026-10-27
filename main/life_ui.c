@@ -18,16 +18,14 @@ static lv_obj_t *s_screen, *s_title, *s_meta, *s_battery;
 static lv_obj_t *s_frame, *s_canvas, *s_status, *s_hint, *s_help;
 static lv_obj_t *s_rows[6];
 static life_audio_view_t s_audio = { .dbfs = -96 };
-static const char *const s_seeds[] = {
-    "滑翔机", "脉冲星", "闪烁器", "轻型飞船", "随机宇宙", "空白画布", "R五连块"
-};
 static const char *const s_tools[] = {
-    "种子图鉴", "重新播种", "编辑细胞", "边界", "声音接收", "演化法则", "返回演化"
+    "声音接收", "重新开始", "边界", "说明", "返回演化"
 };
-static const char *const s_seed_hints[] = {
-    "四代前进一格", "三代循环的星群", "两代交替的节奏",
-    "向左航行的生命", "密度28%的新世界", "进入工具编辑细胞", "五点扩散，持续变换"
-};
+static const char *const s_info[] = { "演化法则", "软件说明" };
+static const char s_about[] =
+    "Life Passport\n生命游戏\n\n"
+    "36列 × 32行\nB3 / S23\n"
+    "本地演化 声音同步\n\n应用代码 MIT\n字体 OFL";
 static const char s_rules[] =
     "B3 / S23\n\n"
     "空格+3邻居：新生\n"
@@ -74,13 +72,11 @@ static void draw_board(const life_app_t *app) {
     for (int y = 0; y < LIFE_ROWS; ++y) {
         for (int x = 0; x < LIFE_COLS; ++x) {
             uint8_t age = app->game.cells[y][x];
-            bool cursor = app->page == LIFE_EDIT && x == app->cursor_x && y == app->cursor_y;
             for (int py = 0; py < CELL; ++py) {
                 for (int px = 0; px < CELL; ++px) {
                     uint8_t color = 0;
                     if (age && px < CELL - 1 && py < CELL - 1) color = age <= 2 ? 2 : 3;
                     else if (!age && px == 2 && py == 2) color = 1;
-                    if (cursor && (px == 0 || py == 0 || px == CELL - 1 || py == CELL - 1)) color = 4;
                     pixel(buffer, x * CELL + px, y * CELL + py, color);
                 }
             }
@@ -113,7 +109,7 @@ void life_ui_create(const life_app_t *app, int battery) {
     LV_DRAW_BUF_INIT_STATIC(s_pixels);
     lv_canvas_set_draw_buf(s_canvas, &s_pixels);
     lv_obj_set_pos(s_canvas, 12, 74);
-    const uint32_t colors[] = { BG, 0x24403A, ACCENT, 0x62AC90, 0xFFC984 };
+    const uint32_t colors[] = { BG, 0x24403A, ACCENT, 0x62AC90 };
     for (unsigned i = 0; i < sizeof(colors) / sizeof(colors[0]); ++i)
         lv_canvas_set_palette(s_canvas, i, lv_color_to_32(lv_color_hex(colors[i]), LV_OPA_COVER));
     for (unsigned i = 0; i < 6; ++i) {
@@ -135,9 +131,9 @@ void life_ui_refresh(const life_app_t *app, int battery) {
     assert(app && s_screen);
     const char *title = "生命游戏";
     if (app->page == LIFE_TOOLS) title = "工具";
-    if (app->page == LIFE_LIBRARY) title = "种子图鉴";
-    if (app->page == LIFE_EDIT) title = "编辑细胞";
-    if (app->page == LIFE_HELP) title = "演化法则";
+    if (app->page == LIFE_INFO) title = "说明";
+    if (app->page == LIFE_RULES) title = "演化法则";
+    if (app->page == LIFE_ABOUT) title = "软件说明";
     if (app->page == LIFE_LINK) title = "声音接收";
     if (app->page == LIFE_REMOTE) title = "收到种子";
     lv_label_set_text(s_title, title);
@@ -146,8 +142,9 @@ void life_ui_refresh(const life_app_t *app, int battery) {
     lv_label_set_text_fmt(s_meta, "代%06" PRIu64 " 活%04u %s",
                           app->game.generation % 1000000, app->game.population,
                           app->game.wrap ? "环绕" : "有限");
-    bool list = app->page == LIFE_TOOLS || app->page == LIFE_LIBRARY;
-    bool text_page = app->page == LIFE_HELP || app->page == LIFE_LINK;
+    unsigned list_count = app->page == LIFE_TOOLS ? LIFE_TOOL_COUNT : app->page == LIFE_INFO ? LIFE_INFO_COUNT : 0;
+    bool list = list_count != 0;
+    bool text_page = app->page == LIFE_RULES || app->page == LIFE_ABOUT || app->page == LIFE_LINK;
     lv_obj_set_flag(s_frame, LV_OBJ_FLAG_HIDDEN, list || text_page);
     lv_obj_set_style_border_color(s_frame, lv_color_hex(app->game.wrap ? MUTED : ACCENT), 0);
     lv_obj_set_flag(s_canvas, LV_OBJ_FLAG_HIDDEN, list || text_page);
@@ -159,26 +156,26 @@ void life_ui_refresh(const life_app_t *app, int battery) {
                             s_audio.state == LIFE_CAPTURE_FAILED ? "接收失败，OK重试" : "已暂停监听";
         int db10 = (int)(s_audio.dbfs * 10);
         unsigned magnitude = (unsigned)(db10 < 0 ? -db10 : db10);
-        lv_label_set_text_fmt(s_help, "%s\n信号 %s%u.%udBFS\n主频%luHz 削波%lu%%\n通过%lu 拒绝%lu\n重复%lu 序号%u\n数据%s\n解码最大%lu.%lums\n%s",
+        lv_label_set_text_fmt(s_help, "%s\n信号 %s%u.%udBFS\n主频%luHz 削波%lu%%\n通过%lu 拒绝%lu\n重复%lu 序号%u\n数据%s\n棋盘分片%u/%u\n解码最大%lu.%lums\n%s",
             state, db10 < 0 ? "-" : "", magnitude / 10, magnitude % 10,
             (unsigned long)s_audio.frequency_hz, (unsigned long)s_audio.clipped_percent,
             (unsigned long)s_audio.valid, (unsigned long)s_audio.rejected, (unsigned long)s_audio.duplicates,
-            s_audio.seq, s_audio.payload[0] ? s_audio.payload : "--", (unsigned long)(s_audio.max_decode_us / 1000),
+            s_audio.seq, s_audio.payload[0] ? s_audio.payload : "--", s_audio.shards_received, s_audio.shards_total,
+            (unsigned long)(s_audio.max_decode_us / 1000),
             (unsigned long)((s_audio.max_decode_us % 1000) / 100),
             s_audio.key[0] ? s_audio.key : "请播放网页测试音");
         if (s_audio.state == LIFE_CAPTURE_FAILED)
             lv_label_set_text_fmt(s_status, "失败阶段%u 代码%lu", s_audio.stage, (unsigned long)s_audio.error);
         else lv_label_set_text(s_status, "校验通过请对照序号");
         lv_label_set_text(s_hint, "下清零 OK暂停 长按返回");
-    } else lv_label_set_text(s_help, s_rules);
-    unsigned offset = list && app->selection >= 6 ? app->selection - 5 : 0;
+    } else lv_label_set_text(s_help, app->page == LIFE_ABOUT ? s_about : s_rules);
     for (unsigned i = 0; i < 6; ++i) {
-        lv_obj_set_flag(s_rows[i], LV_OBJ_FLAG_HIDDEN, !list);
-        if (!list) continue;
-        unsigned item = i + offset;
+        lv_obj_set_flag(s_rows[i], LV_OBJ_FLAG_HIDDEN, i >= list_count);
+        if (i >= list_count) continue;
+        unsigned item = i;
         bool selected = app->selection == item;
-        const char *name = app->page == LIFE_LIBRARY ? s_seeds[item] : s_tools[item];
-        if (app->page == LIFE_TOOLS && item == 3)
+        const char *name = app->page == LIFE_INFO ? s_info[item] : s_tools[item];
+        if (app->page == LIFE_TOOLS && item == 2)
             lv_label_set_text_fmt(s_rows[i], "%02u   %s: %s", item + 1, name, app->game.wrap ? "环绕" : "有限");
         else lv_label_set_text_fmt(s_rows[i], "%02u   %s", item + 1, name);
         lv_obj_set_style_bg_color(s_rows[i], lv_color_hex(ACCENT), 0);
@@ -191,22 +188,16 @@ void life_ui_refresh(const life_app_t *app, int battery) {
         lv_label_set_text(s_hint, app->running ? "上调速 下单步 OK暂停" : "上调速 下单步 OK播放");
         draw_board(app);
     } else if (app->page == LIFE_REMOTE) {
-        if (app->audio_requested && s_audio.key[0]) {
-            lv_label_set_text_fmt(s_status, "key %s", s_audio.key);
+        if (app->audio_requested && (s_audio.key[0] || s_audio.board_transfer)) {
+            if (s_audio.key[0]) lv_label_set_text_fmt(s_status, "key %s", s_audio.key);
+            else lv_label_set_text(s_status, "手绘棋盘 校验通过");
             lv_label_set_text_fmt(s_meta, "活%04u CRC%08lX", app->game.population, (unsigned long)app->remote_crc);
         } else lv_label_set_text(s_status, "完整接收，请确认图案");
         lv_label_set_text(s_hint, "OK应用 长按取消");
         draw_board(app);
-    } else if (app->page == LIFE_EDIT) {
-        lv_label_set_text_fmt(s_status, "行%02u 列%02u  OK:细胞", app->cursor_y + 1, app->cursor_x + 1);
-        lv_label_set_text(s_hint, "上下一格 长按换行/返回");
-        draw_board(app);
-    } else if (app->page == LIFE_LIBRARY) {
-        lv_label_set_text(s_status, s_seed_hints[app->selection]);
-        lv_label_set_text(s_hint, "上下选择 OK:确定 长按返回");
     } else if (app->page != LIFE_LINK) {
         lv_label_set_text(s_status, "长按OK:返回");
-        lv_label_set_text(s_hint, text_page ? "OK:返回工具" : "上下选择 OK:确定");
+        lv_label_set_text(s_hint, text_page ? "OK:返回说明" : "上下选择 OK:确定");
     }
 }
 

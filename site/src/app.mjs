@@ -1,39 +1,52 @@
 import './style.css';
-import { keyValue, keyText, keyBoard, randomKey, makeFrame, dataPattern, hex } from './codec.mjs';
+import './editor.css';
+import './catalog.css';
+import './image.css';
+import { makeFrame, dataPattern, hex } from './codec.mjs';
 import { Player, prepareEncoder, encodeFrame, toneWave, joinWaves, wavBytes } from './audio.mjs';
 import { cases } from './cases.mjs';
 import { loadRecords, saveRecord } from './records.mjs';
+import { BoardEditor } from './board-editor.mjs';
+import { boardFrames, encodeBoard } from './board-transport.mjs';
+import { boardInfo } from './world.mjs';
+import { ReceiveUI } from './receive-ui.mjs';
+import { CatalogUI } from './catalog-ui.mjs';
+import { ImageUI } from './image-ui.mjs';
 
 const $ = (id) => document.getElementById(id);
 const player = new Player();
 let active = 'seed', ready = false, busy = false, epoch = 0, seq = crypto.getRandomValues(new Uint8Array(1))[0];
 let prepared, records, currentFrame;
+let editor, receiverUI, imageUI;
 const error = (value) => { $('error').textContent = value instanceof Error ? value.message : String(value); $('error').hidden = false; };
 const clearError = () => { $('error').hidden = true; };
 function controls() {
-  for (const field of document.querySelectorAll('input,select,[data-tab],#random')) field.disabled = busy;
-  $('count').disabled = busy || $('loop').checked;
-  $('play').disabled = busy || active === 'records' || (active !== 'tones' && !ready);
-  $('download').disabled = busy || active === 'records' || (active !== 'tones' && !ready);
+  const receiving = receiverUI?.active || Boolean(receiverUI?.pending), blocked = busy || receiving || Boolean(imageUI?.active);
+  for (const field of document.querySelectorAll('input,select')) field.disabled = blocked;
+  for (const tab of document.querySelectorAll('[data-tab]')) tab.disabled = busy || Boolean(receiverUI?.pending);
+  $('count').disabled = blocked || $('loop').checked;
+  $('wrap').disabled = blocked || Boolean(editor?.preview);
+  $('play').disabled = blocked || Boolean(editor?.preview) || ['records', 'receive'].includes(active) || (active !== 'tones' && !ready);
+  $('download').disabled = $('play').disabled;
+  $('listen-start').disabled = blocked || Boolean(editor?.preview);
+  $('loop-label').textContent = active === 'seed' && !editor?.model.key ? '重复播放声音 · 最长180秒' : '重复播放声音 · 最长60秒';
+  editor?.setLocked(blocked);
   $('play').textContent = active === 'seed' ? '播放种子音 ▶' : active === 'tones' ? '播放测试音 ▶' : '播放数据音 ▶';
 }
-function drawBoard() {
-  const canvas = $('board'), context = canvas.getContext('2d');
-  context.fillStyle = '#0a2520'; context.fillRect(0, 0, canvas.width, canvas.height);
-  try {
-    const board = keyBoard($('key').value);
-    $('population').textContent = `${board.population} 个生命`;
-    $('board-crc').textContent = `CRC ${board.crc.toString(16).padStart(8, '0').toUpperCase()}`;
-    for (let y = 0; y < 32; y++) for (let x = 0; x < 36; x++) {
-      context.fillStyle = board.cells[y * 36 + x] ? '#d9ef85' : '#29443a';
-      if (board.cells[y * 36 + x]) context.fillRect(x * 20 + 2, y * 20 + 2, 16, 16);
-      else context.fillRect(x * 20 + 9, y * 20 + 9, 2, 2);
-    }
-  } catch (failure) { $('population').textContent = '待输入'; $('board-crc').textContent = 'CRC —'; throw failure; }
-}
+editor = new BoardEditor({ changed: () => refresh(), error, saveFile });
+receiverUI = new ReceiveUI({ apply: seed => { editor.apply(seed); document.querySelector('[data-tab=seed]').click(); }, changed: controls, error });
+new CatalogUI({ apply: (cells, name, periods) => editor.preset(cells, name, periods), error, boundary: () => $('wrap').checked, interval: () => Number($('interval').value) });
+imageUI = new ImageUI({ apply: seed => editor.apply(seed), changed: controls, error, boundary: () => $('wrap').checked, interval: () => Number($('interval').value) });
 function preparePacket() {
-  const kind = active === 'data' ? 'diag' : 'key';
-  prepared = { kind, key: $('key').value, wrap: $('wrap').checked, interval: Number($('interval').value), data: kind === 'diag' ? dataPattern($('pattern').value) : undefined, corrupt: kind === 'diag' && $('corrupt').checked };
+  if (active === 'seed') {
+    const { cells, key } = editor.model, wrap = $('wrap').checked, interval = Number($('interval').value);
+    prepared = { kind: key ? 'key' : 'board', key, cells: cells.slice(), wrap, interval };
+    const count = key ? 1 : 1 + Math.ceil(encodeBoard(cells).data.length / 5), info = boardInfo(cells);
+    $('send-mode').textContent = key ? '发送方式：世界码短包' : '发送方式：完整手绘棋盘';
+    $('send-summary').textContent = `${count}包 · ${info.population}个生命 · CRC ${info.crc.toString(16).padStart(8, '0').toUpperCase()}。${key ? '保留快速世界码同步。' : '收齐并校验后才会预览；可循环补齐丢失分片。'}`;
+    return;
+  }
+  prepared = { kind: 'diag', data: dataPattern($('pattern').value), corrupt: $('corrupt').checked };
   currentFrame = makeFrame({ ...prepared, seq });
   $('packet').textContent = hex(currentFrame);
   $('packet-info').textContent = `序号 ${seq} · 内容 ${hex(currentFrame.slice(5, 12))}${prepared.corrupt ? ' · 错误CRC测试' : ''}`;
@@ -41,24 +54,27 @@ function preparePacket() {
 function stop() { epoch++; player.stop(); busy = false; $('progress').value = 0; $('stop').disabled = true; controls(); $('status').textContent = '播放已停止'; }
 function refresh() {
   clearError();
-  try { if (active === 'seed') drawBoard(); if (active !== 'tones' && active !== 'records') preparePacket(); } catch (failure) { error(failure); }
+  try { if (active === 'seed') editor.render(); if (active === 'seed' || active === 'data') preparePacket(); } catch (failure) { error(failure); }
   controls();
 }
-for (const button of document.querySelectorAll('[data-tab]')) button.addEventListener('click', () => {
-  stop(); active = button.dataset.tab;
+for (const button of document.querySelectorAll('[data-tab]')) button.addEventListener('click', async () => {
+  stop();
+  try { if (receiverUI.active && button.dataset.tab !== 'receive') await receiverUI.stop(); }
+  catch (failure) { error(failure); return; }
+  if (editor.preview) editor.endPreview(true);
+  active = button.dataset.tab;
+  document.querySelector('.player').hidden = ['receive', 'records'].includes(active);
+  document.querySelector('.transport').hidden = ['receive', 'records'].includes(active);
   for (const item of document.querySelectorAll('[data-tab]')) item.setAttribute('aria-selected', String(item === button));
   for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== active;
   refresh();
 });
-$('random').addEventListener('click', () => { $('key').value = randomKey(); seq = (seq + 1) & 255; refresh(); });
-$('key').addEventListener('input', () => { seq = (seq + 1) & 255; refresh(); });
-$('key').addEventListener('blur', () => { try { $('key').value = keyText(keyValue($('key').value)); refresh(); } catch (failure) { error(failure); } });
-for (const id of ['wrap', 'interval', 'pattern', 'corrupt']) $(id).addEventListener('change', refresh);
+for (const id of ['pattern', 'corrupt']) $(id).addEventListener('change', refresh);
 $('volume').addEventListener('input', () => { $('volume-value').textContent = `${$('volume').value}%`; });
 $('loop').addEventListener('change', () => { if ($('loop').checked) $('count').value = '1'; $('count').disabled = $('loop').checked; });
 $('stop').addEventListener('click', stop);
 
-async function waveform(rate) {
+async function waveform(rate, token) {
   const volume = Number($('volume').value);
   if (active === 'tones') {
     const tone = $('tone').value;
@@ -66,18 +82,24 @@ async function waveform(rate) {
     const frequencies = tone === 'dual' ? [1000, 3000] : tone === 'six' ? [1875, 2625, 3375, 4125, 4875, 5625] : [Number(tone)];
     return joinWaves([toneWave(frequencies, rate, 1, volume)]);
   }
+  if (!['seed', 'data'].includes(active)) throw new Error('请切换到编辑、数据或频段页面后播放');
   preparePacket();
   const count = active === 'data' ? Number($('count').value) : 1;
   const waves = [], first = seq;
-  for (let i = 0; i < count; i++) {
-    currentFrame = makeFrame({ ...prepared, seq: (first + i) & 255 });
-    waves.push(await encodeFrame(currentFrame, { protocol: $('protocol').value, sampleRate: rate, volume }));
+  const snapshot = { ...prepared }, frames = snapshot.kind === 'board' ? boardFrames(snapshot.cells, snapshot) : Array.from({ length: count }, (_, i) => makeFrame({ ...snapshot, seq: (first + i) & 255 }));
+  for (let i = 0; i < frames.length; i++) {
+    if (token !== epoch) throw new Error('声音生成已取消');
+    currentFrame = frames[i];
+    const encoded = await encodeFrame(currentFrame, { protocol: $('protocol').value, sampleRate: rate, volume });
+    if (token !== epoch) throw new Error('声音生成已取消');
+    waves.push(encoded);
+    $('status').textContent = `正在生成声音 · ${i + 1}/${frames.length}包`;
   }
   seq = (first + count) & 255;
   $('packet').textContent = hex(currentFrame);
   $('packet-info').textContent = `末包序号 ${currentFrame[4]} · 内容 ${hex(currentFrame.slice(5, 12))}${prepared.corrupt ? ' · 错误CRC测试' : ''}`;
-  $('details').textContent = `${count}帧 · 序号${first}–${currentFrame[4]} · 末包内容${hex(currentFrame.slice(5, 12))}`;
-  return joinWaves(waves);
+  $('details').textContent = snapshot.kind === 'board' ? `完整棋盘 · ${frames.length - 1}分片 · 请对照接收端CRC` : `${count}帧 · 序号${first}–${currentFrame[4]} · 末包内容${hex(currentFrame.slice(5, 12))}`;
+  return { ...joinWaves(waves), loopSeconds: snapshot.kind === 'board' ? 180 : 60 };
 }
 async function action(download = false) {
   stop(); clearError(); const token = epoch;
@@ -85,7 +107,7 @@ async function action(download = false) {
   try {
     // Resume is requested inside the click gesture before waiting for WASM.
     const rate = download ? 48000 : await player.resume();
-    const wave = await waveform(rate);
+    const wave = await waveform(rate, token);
     if (token !== epoch) return;
     if (download) {
       saveFile(wavBytes(wave), 'LifePassport-LP1.wav', 'audio/wav');
@@ -98,7 +120,7 @@ async function action(download = false) {
       if (token !== epoch) return;
       busy = false; controls(); $('stop').disabled = true; $('progress').value = 1;
       $('status').textContent = '播放结束，请查看设备结果';
-    });
+    }, wave.loopSeconds ?? 60);
     const tick = () => {
       if (token !== epoch || !player.source) return;
       $('progress').value = ((performance.now() - started) / 1000 % wave.seconds) / wave.seconds;
@@ -143,6 +165,12 @@ $('record-form').addEventListener('submit', (event) => {
   } catch (failure) { error(failure); }
 });
 $('export').addEventListener('click', () => { if (records) saveFile(JSON.stringify({ v: 1, records }, null, 2), 'LifePassport-test-results.json', 'application/json'); });
-window.addEventListener('pagehide', () => player.stop());
+function suspend() {
+  stop();
+  if (editor.preview) editor.endPreview(true);
+  receiverUI.stop(Boolean(receiverUI.pending)).catch(error);
+}
+window.addEventListener('pagehide', suspend);
+document.addEventListener('visibilitychange', () => { if (document.hidden) suspend(); });
 refresh();
-prepareEncoder().then(() => { ready = true; $('encoder-state').textContent = '声码已就绪 · 手机不需要麦克风权限'; controls(); }).catch((failure) => { $('encoder-state').textContent = '声码加载失败'; error(failure); });
+prepareEncoder().then(() => { ready = true; $('encoder-state').textContent = '声码已就绪 · 发送无需麦克风权限，收音时才申请'; controls(); }).catch((failure) => { $('encoder-state').textContent = '声码加载失败'; error(failure); });

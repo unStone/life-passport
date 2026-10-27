@@ -1,11 +1,15 @@
 #pragma once
 #include <stdbool.h>
 #include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define LIFE_COLS 36
 #define LIFE_ROWS 32
 #define LIFE_BITS_SIZE ((LIFE_COLS * LIFE_ROWS + 7) / 8)
-#define LIFE_TOOL_COUNT 7
+#define LIFE_TOOL_COUNT 5
+#define LIFE_INFO_COUNT 2
 
 typedef enum {
     LIFE_GLIDER, LIFE_PULSAR, LIFE_BLINKER, LIFE_SPACESHIP,
@@ -23,7 +27,7 @@ bool life_set(life_t *game, int x, int y, bool alive);
 void life_seed(life_t *game, life_seed_t seed, uint32_t random_seed);
 void life_step(life_t *game);
 
-typedef enum { LIFE_WATCH, LIFE_TOOLS, LIFE_LIBRARY, LIFE_EDIT, LIFE_HELP, LIFE_LINK, LIFE_REMOTE } life_page_t;
+typedef enum { LIFE_WATCH, LIFE_TOOLS, LIFE_INFO, LIFE_RULES, LIFE_ABOUT, LIFE_LINK, LIFE_REMOTE } life_page_t;
 typedef enum { LIFE_REMOTE_NONE, LIFE_REMOTE_PREVIEW, LIFE_REMOTE_APPLIED, LIFE_REMOTE_CANCELLED } life_remote_status_t;
 typedef enum { LIFE_REMOTE_NEW, LIFE_REMOTE_REPEAT, LIFE_REMOTE_BUSY, LIFE_REMOTE_CONFLICT } life_remote_result_t;
 typedef enum {
@@ -34,15 +38,13 @@ typedef struct {
     life_t game;
     life_t saved_game, seed_template;
     life_page_t page;
-    life_seed_t seed;
-    uint32_t random_seed;
     uint64_t last_step_ms, last_input_ms;
-    uint8_t speed, selection, cursor_x, cursor_y;
+    uint8_t speed, selection;
     bool running;
     life_page_t saved_page;
     life_remote_status_t remote_status;
     uint8_t saved_speed;
-    bool saved_running, custom_seed, phone_connected, audio_requested;
+    bool saved_running, phone_connected, audio_requested;
     uint32_t remote_id, remote_crc;
     uint16_t remote_interval;
     bool remote_wrap;
@@ -58,3 +60,6 @@ bool life_app_input(life_app_t *app, life_input_t input, uint64_t now_ms);
 bool life_app_tick(life_app_t *app, uint64_t now_ms);
 life_idle_t life_app_idle(const life_app_t *app, uint64_t now_ms);
 unsigned life_app_fps(const life_app_t *app);
+#ifdef __cplusplus
+}
+#endif
