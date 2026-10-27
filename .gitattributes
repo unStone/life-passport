@@ -1,0 +1,2 @@
+# Generated JavaScript may contain significant trailing spaces in template literals.
+assets/*.js whitespace=-blank-at-eol
