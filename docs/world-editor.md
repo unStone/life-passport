@@ -2,7 +2,7 @@
 
 # World editor and browser reception
 
-The public [Life Passport page](https://unstone.github.io/life-passport/) supports desktop mouse/keyboard and mobile touch editing, sending and microphone reception. The receiver displays a verified preview; applying it replaces the editor content with an undo step. Rejected, partial and cancelled transfers never replace the editor or device board.
+The public [China-hosted Life Passport page](https://ssstone0903-life-passport.ms.show/) and [GitHub Pages mirror](https://unstone.github.io/life-passport/) support desktop mouse/keyboard and mobile touch editing, sending and microphone reception. The receiver displays a verified preview; applying it replaces the editor content with an undo step. Rejected, partial and cancelled transfers never replace the editor or device board. See the [deployment and verification record](life-passport-release.md) for measured checks and remaining physical tests.
 
 ## Interaction contract
 

@@ -4,7 +4,9 @@
 
 The editor also provides a searchable 519-pattern catalog, native two-finger zoom/pan, and image-derived natural oscillators. Upload an image, compute a period-2/3/4 approximation, inspect genuine B3/S23 evolution, then explicitly adopt and transmit it. Images remain local. The image solver is loaded only when computing; computation can be stopped while retaining a verified result. See the [algorithm, limits and acceptance cases](../docs/world-editor.md#image-derived-natural-oscillation).
 
-[Public page](https://unstone.github.io/life-passport/) · [World editor and reception](../docs/world-editor.md) · [Laboratory cases](../docs/acoustic-lab.md). This Chinese static page supports desktop/touch painting, undo/redo, preview, JSON import/export, key and complete-board audio sending, and explicit microphone or WAV reception. A received board is previewed before applying it. Audio stays local; stopping/backgrounding releases capture. Sending alone supplies no acknowledgement. Human test records remain in localStorage and export as JSON.
+[China-hosted page](https://ssstone0903-life-passport.ms.show/) · [GitHub Pages mirror](https://unstone.github.io/life-passport/) · [World editor and reception](../docs/world-editor.md) · [Laboratory cases](../docs/acoustic-lab.md). This Chinese static page supports desktop/touch painting, undo/redo, preview, JSON import/export, key and complete-board audio sending, and explicit microphone or WAV reception. A received board is previewed before applying it. Audio stays local; stopping/backgrounding releases capture. Sending alone supplies no acknowledgement. Human test records remain in localStorage and export as JSON.
+
+The [deployment and verification record](../docs/life-passport-release.md) identifies the exact tested build. The China-hosted free instance may sleep while idle; reopening activates it. Use the direct page for microphone reception rather than relying on permissions in an embedded frame.
 
 Use fnm with Node **22.22.3**. The complete gate installs the declared dependencies; development commands are:
 

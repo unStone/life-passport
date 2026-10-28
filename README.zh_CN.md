@@ -6,7 +6,8 @@
 默认每200ms演化一代。保留完整[上游AI Passport项目](https://gitee.com/FoloToy/ai-passport)
 及其BSP，编辑器开发位于`feature/world-editor`分支。
 
-打开[声音网页](https://unstone.github.io/life-passport/)，使用[PC／手机编辑器与麦克风接收](docs/world-editor.zh_CN.md)，或按[实验用例](docs/acoustic-lab.zh_CN.md)测试，无需安装手机应用。
+在PC或手机打开[国内网页](https://ssstone0903-life-passport.ms.show/)或[GitHub备用网页](https://unstone.github.io/life-passport/)，使用[编辑器与麦克风接收](docs/world-editor.zh_CN.md)，或按[实验用例](docs/acoustic-lab.zh_CN.md)测试，无需安装手机应用。
+国内免费实例闲置后会休眠，重新访问时激活；详见[已验证固件与部署记录](docs/life-passport-release.zh_CN.md)。
 
 ![实际原生LVGL程序渲染的应用页面](assets/images/life-ui-pages.png)
 
@@ -51,10 +52,10 @@
 
 | 检查 | 最近应用结果 |
 | --- | --- |
-| Build | 针对交付的精确固件执行完整门禁；随附报告含合并镜像校验。 |
-| Host tests | 门禁覆盖协议／CRC、共用key、原生LVGL／字体与真实WASM／原生声音互通。 |
-| Device tests | 随固件交付的报告单独记录精确启动、资源与声音观察结果。 |
-| Unverified | iPhone／Android播放和房间可靠性、完整实体按键组合、肉眼显示检查、电池／功耗与休眠唤醒。 |
+| Build | PASS，固件`090a3b9`通过完整门禁与从`0x0`刷写的合并镜像校验。 |
+| Host tests | PASS，包含29项网页测试、519个图鉴往返、原生LVGL／字体及真实WASM／原生声音互通。 |
+| Device tests | PASS，已验证启动、123细胞完整声音接收、实体确认及持续200ms演化。 |
+| Unverified | 网页真实麦克风接收、实体手机／Safari兼容、噪声与距离成功率、完整字形／按键矩阵、电池／功耗与休眠唤醒。 |
 
 固件、原始私有日志和本地环境缓存不进入Git。
 

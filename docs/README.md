@@ -210,6 +210,7 @@ provide reference material. Choose the entry that matches your task.
 | [Acoustic seed laboratory](acoustic-lab.md) | Browser sender, LP1 protocol, diagnostic receiver and fourteen manual cases |
 | [World editor and browser reception](world-editor.md) | Desktop/touch drawing, preview, complete-board transport and microphone reception |
 | [Web pattern catalog](pattern-catalog.md) | 519 fitted named patterns, source/license, classification and reproducible data tools |
+| [Life Passport verified snapshot](life-passport-release.md) | Public website addresses, exact tested firmware identity and physical acceptance results |
 | [Seed compression and acoustic reliability](seed-transport-research.md) | Fixed-board encoding measurements, error correction, erasure recovery and audio resource experiments |
 | [Mobile seed editor](mobile-control.md) | Android/iOS editor, voice commands, BLE transfer protocol and physical confirmation |
 | [AI skills](../skills/README.md) | Development, environment setup, builds, device testing, and debugging |

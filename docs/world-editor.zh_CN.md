@@ -2,7 +2,7 @@
 
 # 世界编辑器与网页收音
 
-[生命声场网页](https://unstone.github.io/life-passport/)支持PC鼠标／键盘和移动触摸编辑、发送及麦克风接收。接收端先展示已验证预览，应用后通过一个可撤销步骤替换编辑稿；无效、未收齐或已取消的内容始终不替换编辑稿或设备棋盘。
+[生命声场国内网页](https://ssstone0903-life-passport.ms.show/)与[GitHub备用网页](https://unstone.github.io/life-passport/)支持PC鼠标／键盘和移动触摸编辑、发送及麦克风接收。接收端先展示已验证预览，应用后通过一个可撤销步骤替换编辑稿；无效、未收齐或已取消的内容始终不替换编辑稿或设备棋盘。实测检查与未完成的实物测试见[部署及验证记录](life-passport-release.zh_CN.md)。
 
 ## 交互约定
 

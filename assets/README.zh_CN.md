@@ -56,6 +56,7 @@ iOS 和网页所需尺寸，生成 PNG 保留在对应平台资产目录。
 
 | 文件 | 尺寸与格式 | 用途与来源 |
 | --- | --- | --- |
+| [`images/life-passport-cover.png`](images/life-passport-cover.png) | 1086 × 1448，PNG，3:4 | 2026-10-28使用内置图像生成工具制作的推广玩法插画，并非设备照片或运行截图；提示词保存在`images/life-passport-cover.prompt.txt`，该图片不嵌入固件。 |
 | [`images/life-ui-pages.png`](images/life-ui-pages.png) | 960 × 320，PNG | 分支README使用的实际原生LVGL应用渲染；由`tools/test_life_ui.py`和ImageMagick生成。应用图形遵循MIT，所渲染的Noto Sans SC字形保留字体OFL声明。 |
 | [`images/home.jpg`](images/home.jpg) | 3840 × 2160，JPEG | 嵌入中英文项目 README 的产品主图，突出 AI Passport 产品形象与开放、人人可创作的理念。 |
 | [`images/readme-hardware-specs.png`](images/readme-hardware-specs.png) | 2172 × 724，PNG RGBA | 保留为可选技术参考图，不再用于首页主视觉。于 2026-09-17 使用内置图像生成工具为本仓库生成；已根据文档中的硬件能力契约核对图中的六项标签与参数。 |

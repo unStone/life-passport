@@ -204,6 +204,7 @@ LICENSE                  仓库许可证
 | [声音种子实验室](acoustic-lab.zh_CN.md) | 浏览器发送、LP1协议、诊断接收器与14项手动用例 |
 | [世界编辑器与网页收音](world-editor.zh_CN.md) | 鼠标／触摸绘制、预览、完整棋盘传输与麦克风接收 |
 | [网页种子图鉴](pattern-catalog.zh_CN.md) | 519个适配图案、来源／许可、分类及可复现数据工具 |
+| [生命声场已验证版本](life-passport-release.zh_CN.md) | 公开网页地址、精确固件身份与实物验收结果 |
 | [种子压缩与声音抗噪](seed-transport-research.zh_CN.md) | 固定棋盘编码实测、纠错、丢帧恢复及音频资源实验 |
 | [手机种子编辑器](mobile-control.zh_CN.md) | Android/iOS 编辑器、语音指令、BLE 协议与实体确认 |
 | [AI 技能](../skills/README.zh_CN.md) | 开发、环境准备、构建、真机测试与故障诊断 |

@@ -7,9 +7,12 @@ a 36×32 board, three-button controls, and a 200ms default generation interval.
 The complete [upstream AI Passport project](https://gitee.com/FoloToy/ai-passport)
 and its BSP are retained. Editor development lives on `feature/world-editor`.
 
-Open the [acoustic website](https://unstone.github.io/life-passport/) on a phone;
+Open the [China-hosted website](https://ssstone0903-life-passport.ms.show/)
+or [GitHub Pages mirror](https://unstone.github.io/life-passport/) on a phone or PC;
 use the [PC/mobile editor and microphone receiver](docs/world-editor.md), or follow
 the [laboratory cases](docs/acoustic-lab.md). No phone application is needed.
+The free China-hosted instance can sleep while idle; reopening activates it.
+See the [verified firmware and deployment record](docs/life-passport-release.md).
 
 ![Application pages rendered by the real native LVGL program](assets/images/life-ui-pages.png)
 
@@ -54,10 +57,10 @@ data, and requires authorization for the target device. Do not flash an app-only
 
 | Check | Latest application result |
 | --- | --- |
-| Build | Run the full gate for the exact delivered firmware; its report includes merged-image verification. |
-| Host tests | Protocol/CRC, shared keys, native LVGL/fonts and actual WASM/native acoustic interoperability are covered by the gate. |
-| Device tests | The delivered firmware report records exact boot, resources and acoustic observations separately from software tests. |
-| Unverified | iPhone/Android playback and measured room reliability, full physical-key matrix, visual display review, battery/current and sleep/wake. |
+| Build | PASS for firmware `090a3b9`; the merged image is verified for flashing at `0x0`. |
+| Host tests | PASS, including 29 web tests, 519 catalog round trips, native LVGL/font checks and actual WASM/native acoustic interoperability. |
+| Device tests | PASS for boot, complete 123-cell acoustic reception, physical confirmation and sustained 200ms evolution. |
+| Unverified | Real browser microphone reception, physical phone/Safari compatibility, measured noise/distance reliability, full visual/key matrix, battery/current and sleep/wake. |
 
 Firmware, private logs and local environment caches are excluded from Git.
 
